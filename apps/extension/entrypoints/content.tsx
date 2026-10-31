@@ -3,43 +3,20 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { createShadowRootUi } from 'wxt/utils/content-script-ui/shadow-root';
-import tokensCss from '../src/ui/tokens.css?inline';
-import badgeCss from '../src/ui/components/StatusBadge.css?inline';
-import buttonCss from '../src/ui/components/Button.css?inline';
-import bannerCss from '../src/ui/components/VerdictBanner.css?inline';
-import holdCss from '../src/ui/components/HoldIndicator.css?inline';
-import calloutCss from '../src/ui/components/FieldCallout.css?inline';
-import panelCss from '../src/ui/components/TransparencyPanel.css?inline';
-import consentCss from '../src/ui/components/ConsentDialog.css?inline';
-import {
-  fixtures,
-  fixtureS3Resolved,
-  isL4Pending,
-  type FixtureKey,
-} from '../src/__fixtures__/verdicts';
+import type { AnalysisResult } from '@phantom/core';
+import { analyzeCurrentPage } from '../src/analyze/analyzePage';
+import { toVerdict } from '../src/analyze/toVerdict';
+import { SENSITIVE_SELECTOR } from '../src/analyze/extractFeatures';
+import { isL4Pending } from '../src/__fixtures__/verdicts';
 import type { Verdict } from '../src/ui/types';
+import { fontFaceCss } from '../src/ui/fonts';
 import { VerdictBanner } from '../src/ui/components/VerdictBanner';
 import { TransparencyPanel } from '../src/ui/components/TransparencyPanel';
 import { FieldCallout } from '../src/ui/components/FieldCallout';
-import { StatusBadge } from '../src/ui/components/StatusBadge';
 import { ConsentDialog } from '../src/ui/components/ConsentDialog';
 import { HoldIndicator, type HoldIndicatorHandle } from '../src/ui/components/HoldIndicator';
 
-const ALL_CSS = [
-  ':host { all: initial; z-index: 2147483647; }',
-  tokensCss,
-  badgeCss,
-  buttonCss,
-  bannerCss,
-  holdCss,
-  calloutCss,
-  panelCss,
-  consentCss,
-].join('\n');
-
 const CONSENT_STORAGE_KEY = 'phantom:consentShown';
-const SENSITIVE_SELECTOR =
-  'input[type="password"], input[autocomplete="one-time-code"], input[autocomplete="current-password"]';
 
 type Panel =
   | { kind: 'none' }
@@ -57,22 +34,48 @@ function Harness() {
   const pendingSubmit = useRefNull<HTMLFormElement>();
   const holdRef = React.useRef<HoldIndicatorHandle>(null);
 
-  // --- Pesan dari popup: pilih fixture ---
+  // --- Analisis L0–L2 nyata dari core; simpan hasil terakhir untuk popup. ---
   React.useEffect(() => {
-    const onMsg = (msg: { type: string; fixture?: FixtureKey }) => {
-      if (msg.type !== 'phantom:render' || !msg.fixture) return;
-      const v = fixtures[msg.fixture];
-      setVerdict(v);
-      setCalloutShown(false);
-      pendingSubmit.current = null;
-      if (v.status === 'caution' || v.status === 'danger') {
-        setPanel({ kind: 'banner-info' });
-      } else {
-        setPanel({ kind: 'none' });
-      }
+    let lastResult: AnalysisResult | null = null;
+
+    const run = () => {
+      const result = analyzeCurrentPage();
+      lastResult = result;
+      setVerdict(toVerdict(result));
+    };
+    run();
+
+    // CORE-10: periksa ulang pada navigasi SPA dan perubahan DOM yang relevan.
+    const onHistoryChange = () => run();
+    window.addEventListener('pushState', onHistoryChange);
+    window.addEventListener('replaceState', onHistoryChange);
+    window.addEventListener('popstate', onHistoryChange);
+
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const observer = new MutationObserver(() => {
+      clearTimeout(timer);
+      timer = setTimeout(run, 300);
+    });
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+    });
+
+    // Popup bertanya status tab aktif; balas hasil mentah (kontrak core).
+    const onMsg = (msg: { type: string }) => {
+      if (msg.type !== 'phantom:getStatus') return;
+      return Promise.resolve(lastResult);
     };
     browser.runtime.onMessage.addListener(onMsg);
-    return () => browser.runtime.onMessage.removeListener(onMsg);
+
+    return () => {
+      window.removeEventListener('pushState', onHistoryChange);
+      window.removeEventListener('replaceState', onHistoryChange);
+      window.removeEventListener('popstate', onHistoryChange);
+      observer.disconnect();
+      clearTimeout(timer);
+      browser.runtime.onMessage.removeListener(onMsg);
+    };
   }, []);
 
   // --- Consent sekali per perangkat (chrome.storage.local) ---
@@ -137,11 +140,7 @@ function Harness() {
         <ConsentDialog onAllow={() => dismissConsent(true)} onDeny={() => dismissConsent(false)} />
       )}
 
-      {verdict && (verdict.status === 'neutral' || verdict.status === 'official') && (
-        <div style={{ position: 'fixed', top: 'var(--s-3)', right: 'var(--s-3)', zIndex: 2147483647 }}>
-          <StatusBadge status={verdict.status} />
-        </div>
-      )}
+      {/* Netral/Resmi tanpa UI overlay (DS-07) — status terlihat di popup */}
 
       {verdict && panel.kind === 'banner-info' && (
         <VerdictBanner
@@ -204,21 +203,13 @@ function Harness() {
   );
 }
 
-// HoldIndicator butuh simulasi "L4 selesai setelah N detik" — di sini disimulasikan 2 dtk
-// memakai fixtureS3Resolved. Fase 4 mengganti ini dengan hasil fetch proxy sungguhan.
+// L4 belum ada (proxy belum dibangun). hold tidak pernah dipicu; status caution langsung ke gate.
 const HoldIndicatorBridge = React.forwardRef<
   HoldIndicatorHandle,
   { verdict: Verdict; onCancel: () => void; onResolved: (v: Verdict) => void }
->(function HoldIndicatorBridge({ verdict, onCancel, onResolved }, ref) {
+>(function HoldIndicatorBridge({ onCancel, onResolved }, ref) {
   const innerRef = React.useRef<HoldIndicatorHandle>(null);
   React.useImperativeHandle(ref, () => innerRef.current as HoldIndicatorHandle, []);
-
-  React.useEffect(() => {
-    const t = setTimeout(() => {
-      innerRef.current?.resolve(fixtureS3Resolved);
-    }, 2000);
-    return () => clearTimeout(t);
-  }, [verdict]);
 
   return <HoldIndicator ref={innerRef} anchor={null} onCancel={onCancel} onResolve={onResolved} />;
 });
@@ -232,14 +223,19 @@ export default defineContentScript({
   cssInjectionMode: 'ui',
 
   async main(ctx) {
+    // DS-22: ambil overlay.css (entrypoint content-script-style) dan injeksikan ke shadow root.
+    const cssUrl = browser.runtime.getURL('/content-scripts/overlay.css');
+    // DS-50: @font-face + overlay.css (entrypoint content-script-style) ke shadow root.
+    const cssText = await fetch(cssUrl).then((r) => r.text());
+    const fontCss = fontFaceCss();
+
     const ui = await createShadowRootUi(ctx, {
       name: 'phantom-overlay',
       position: 'inline',
       anchor: 'body',
       onMount: (container, shadow) => {
-        // DS-22: semua gaya di dalam shadow root; jangan warisi gaya situs.
         const style = document.createElement('style');
-        style.textContent = ALL_CSS;
+        style.textContent = fontCss + '\n' + cssText;
         shadow.prepend(style);
 
         const root = createRoot(container);
