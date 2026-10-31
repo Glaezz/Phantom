@@ -3,7 +3,7 @@
   padding: var(--s-3) var(--s-4);
   border-radius: var(--r-md);
   border: 1px solid;
-  box-shadow: var(--shadow-2);
+  box-shadow: var(--shadow-1), 0 8px 24px var(--ink-100);
 }
 .ph-callout[data-status='caution'] { background: var(--caution-bg); border-color: var(--caution-border); color: var(--caution-fg); }
 .ph-callout[data-status='danger']  { background: var(--danger-bg);  border-color: var(--danger-border);  color: var(--danger-fg); }

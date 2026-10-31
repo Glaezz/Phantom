@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import type { AnalysisResult } from '@phantom/core';
-import { toVerdict } from '../../src/analyze/toVerdict';
 import type { Verdict } from '../../src/ui/types';
 import { copy } from '../../src/ui/copy.id';
 import { StatusBadge } from '../../src/ui/components/StatusBadge';
@@ -9,6 +7,7 @@ import './App.css';
 export default function App() {
   const [verdict, setVerdict] = useState<Verdict | null>(null);
   const [unavailable, setUnavailable] = useState(false);
+  const [site, setSite] = useState('');
 
   useEffect(() => {
     void (async () => {
@@ -17,11 +16,12 @@ export default function App() {
         setUnavailable(true);
         return;
       }
+      try { if (tab.url) setSite(new URL(tab.url).hostname); } catch { /* laman internal */ }
       try {
         const result = (await browser.tabs.sendMessage(tab.id, {
           type: 'phantom:getStatus',
-        })) as AnalysisResult | undefined;
-        if (result) setVerdict(toVerdict(result));
+        })) as Verdict | undefined;
+        if (result) setVerdict(result);
         else setUnavailable(true);
       } catch {
         setUnavailable(true);
@@ -51,21 +51,28 @@ export default function App() {
         />
       </header>
 
+      {!verdict && !unavailable && (
+        <section className="popup-status ph-surface" role="status">
+          <p className="popup-action">Memeriksa laman…</p>
+        </section>
+      )}
+
       {unavailable && (
-        <section className="popup-status ph-surface">
-          <StatusBadge status="neutral" />
+        <section className="popup-status ph-surface" role="status">
+          {site && <p className="popup-site">{site}</p>}
           <p className="popup-detail">Laman ini tidak dapat diperiksa.</p>
         </section>
       )}
 
       {verdict && (
-        <section className="popup-status ph-surface">
+        <section className="popup-status ph-surface" data-status={verdict.status}>
           <StatusBadge status={verdict.status} />
           <p className="popup-action">
             {verdict.status === 'official' && verdict.claimedBrand
               ? copy.action.official.replace('{brand}', verdict.claimedBrand.name)
               : copy.action[verdict.status]}
           </p>
+          {site && <p className="popup-site">{site}</p>}
           {verdict.status === 'official' && verdict.claimedBrand && (
             <p className="popup-detail">
               {copy.popup.officialOf.replace('{brand}', verdict.claimedBrand.name)}

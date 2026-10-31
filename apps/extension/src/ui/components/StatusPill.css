@@ -13,7 +13,7 @@
   padding: var(--s-3);
   border: 2px solid;
   border-radius: var(--r-pill);
-  box-shadow: var(--shadow-3);
+  box-shadow: var(--shadow-2);
   cursor: pointer;
 }
 .ph-pill[data-status='caution'] {
@@ -27,15 +27,6 @@
   color: var(--danger-fg);
 }
 .ph-pill svg { flex-shrink: 0; }
-.ph-pill-label { max-width: 0; overflow: hidden; white-space: nowrap; }
-.ph-pill[data-expanded='true'] .ph-pill-label,
-.ph-pill:hover .ph-pill-label,
-.ph-pill:focus-visible .ph-pill-label {
-  max-width: var(--popup-width);
-  margin-left: var(--s-2);
-}
+.ph-pill-label { margin-left: var(--s-2); white-space: nowrap; font-weight: 600; }
 .ph-pill:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .ph-pill:active { transform: translateY(1px); }
-@media (hover: none) {
-  .ph-pill-label { max-width: var(--popup-width); margin-left: var(--s-2); }
-}

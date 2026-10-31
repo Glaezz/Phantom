@@ -1,7 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { createShadowRootUi } from 'wxt/utils/content-script-ui/shadow-root';
-import type { AnalysisResult } from '@phantom/core';
 import { analyzeCurrentPage } from '../src/analyze/analyzePage';
 import { toVerdict } from '../src/analyze/toVerdict';
 import { SENSITIVE_SELECTOR } from '../src/analyze/extractFeatures';
@@ -49,12 +48,12 @@ function Harness() {
 
   // --- Analisis L0–L2 nyata dari core; simpan hasil terakhir untuk popup. ---
   React.useEffect(() => {
-    let lastResult: AnalysisResult | null = null;
+    let lastVerdict: Verdict | null = null;
 
     const run = () => {
       const result = analyzeCurrentPage();
-      lastResult = result;
-      setVerdict(toVerdict(result));
+      lastVerdict = toVerdict(result);
+      setVerdict(lastVerdict);
     };
     run();
 
@@ -65,19 +64,29 @@ function Harness() {
     window.addEventListener('popstate', onHistoryChange);
 
     let timer: ReturnType<typeof setTimeout> | undefined;
-    const observer = new MutationObserver(() => {
+    const relevant = 'form, input, select, textarea, h1, meta[property="og:site_name"], meta[name="application-name"], script[src], img[src], link[href], iframe[src]';
+    const observer = new MutationObserver((mutations) => {
+      if (!mutations.some((mutation) => {
+        if (mutation.type === 'attributes') return true;
+        return [...mutation.addedNodes, ...mutation.removedNodes].some((node) =>
+          node instanceof Element && (node.matches(relevant) || !!node.querySelector(relevant)) ||
+          node instanceof Text && node.parentElement?.matches('h1')
+        );
+      })) return;
       clearTimeout(timer);
       timer = setTimeout(run, 300);
     });
     observer.observe(document.documentElement, {
       childList: true,
       subtree: true,
+      attributes: true,
+      attributeFilter: ['action', 'method', 'type', 'name', 'id', 'autocomplete', 'placeholder', 'src', 'href', 'content'],
     });
 
-    // Popup bertanya status tab aktif; balas hasil mentah (kontrak core).
+    // Popup menerima verdict siap tampil agar tidak memuat mesin core kedua kali.
     const onMsg = (msg: { type: string }) => {
       if (msg.type !== 'phantom:getStatus') return;
-      return Promise.resolve(lastResult);
+      return Promise.resolve(lastVerdict);
     };
     browser.runtime.onMessage.addListener(onMsg);
 
