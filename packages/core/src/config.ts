@@ -1,4 +1,4 @@
-export const RULES_VERSION = '1.0.0';
+export const RULES_VERSION = '1.0.1';
 export const CACHE_KEY_VERSION = 'v1';
 
 export const CHEAP_SUFFIXES = [
