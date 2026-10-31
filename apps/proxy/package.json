@@ -1,17 +1,26 @@
 {
   "name": "proxy",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "dry-run": "wrangler deploy --dry-run",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "types": "wrangler types"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "dependencies": {
+    "@phantom/core": "^1.0.0",
+    "hono": "^4.13.14",
+    "zod": "^4.6.7"
+  },
   "devDependencies": {
-    "@types/node": "^26.6.6",
-    "typescript": "^7.0.2",
+    "@cloudflare/vitest-pool-workers": "^0.23.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0",
     "wrangler": "^4.156.0"
   }
 }
