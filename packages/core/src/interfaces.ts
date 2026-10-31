@@ -3,6 +3,8 @@ export interface LlmMessage {
   content: string;
   name?: string;
   toolCallId?: string;
+  /** Adapter-owned history (for example Gemini thought signatures) sent back unchanged. */
+  providerRaw?: unknown;
 }
 
 export interface LlmToolDef {
@@ -15,7 +17,7 @@ export interface LlmRequest {
   system: string;
   messages: LlmMessage[];
   tools: LlmToolDef[];
-  temperature: number;
+  temperature?: number;
   maxTokens: number;
 }
 
@@ -23,6 +25,8 @@ export interface LlmResponse {
   toolCalls: { id: string; name: string; args: unknown }[];
   text: string | null;
   usage: { inputTokens: number; outputTokens: number };
+  /** Adapter-owned raw response (for example Gemini parts with thought signatures). */
+  providerRaw?: unknown;
 }
 
 export interface LlmProvider {

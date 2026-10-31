@@ -1,5 +1,5 @@
 import brandsData from './data/brands.json';
-import { loadBrands, validateBrandDb } from './brands';
+import { loadBrands } from './brands';
 import { createEngine, type AnalyzeInput, type Engine } from './engine';
 import type { AnalysisResult, Brand } from './schemas';
 
@@ -22,9 +22,17 @@ export type {
   TraceStep,
 } from './schemas';
 
-export { loadBrands, validateBrandDb };
+export { buildBrandIndex, findBrands, loadBrands, validateBrandDb } from './brands';
+export type { BrandIndex, KeywordEntry, OfficialLabel } from './brands';
 export { createEngine };
 export type { AnalyzeInput, Engine };
+
+export { parseUrl } from './url';
+export type { ParsedUrl } from './url';
+export { isCredentialField, resolveFormTarget } from './l2';
+export type { ResolvedTarget } from './l2';
+export { detectBrandClaims } from './claims';
+export type { BrandClaim, ClaimTextInput } from './claims';
 
 export { normalizeUrlForCache, cacheKey } from './cache-key';
 export { mergeVerdict } from './verdict';
