@@ -1,0 +1,15 @@
+{
+  "name": "phantom-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:ext": "npm run dev --workspace=apps/extension",
+    "dev:web": "npm run dev --workspace=apps/web-cek",
+    "dev:proxy": "npm run dev --workspace=apps/proxy",
+    "build": "npm run build --workspaces --if-present"
+  }
+}
