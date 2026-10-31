@@ -8,7 +8,7 @@ export const fixtureS1Danger: Verdict = {
     'Formulir dikirim ke situs lain yang tidak dikenal.',
   ],
   trace: [
-    { stage: 'L0', finding: 'none', summaryKey: 'trace.L0' },
+    { stage: 'L0', finding: 'none', summaryKey: 'L0' },
     {
       stage: 'L1',
       finding: 'soft',
@@ -21,8 +21,8 @@ export const fixtureS1Danger: Verdict = {
       summaryKey: 'Formulir dikirim ke situs lain.',
       technical: { signal: 'H2', value: 'action=https://collect-data.example.net' },
     },
-    { stage: 'L3', finding: 'skipped', summaryKey: 'trace.L3', skipReasonKey: 'trace.skippedNoConsent' },
-    { stage: 'L4', finding: 'skipped', summaryKey: 'trace.L4', skipReasonKey: 'trace.skippedNoConsent' },
+    { stage: 'L3', finding: 'skipped', summaryKey: 'L3', skipReasonKey: 'skippedNoConsent' },
+    { stage: 'L4', finding: 'skipped', summaryKey: 'L4', skipReasonKey: 'skippedNoConsent' },
   ],
   source: 'rules',
   claimedBrand: {
@@ -38,11 +38,11 @@ export const fixtureS2Neutral: Verdict = {
   status: 'neutral',
   reasons: ['Tetap waspada. Periksa kembali alamat sebelum mengisi data.'],
   trace: [
-    { stage: 'L0', finding: 'none', summaryKey: 'trace.L0' },
+    { stage: 'L0', finding: 'none', summaryKey: 'L0' },
     { stage: 'L1', finding: 'none', summaryKey: 'Alamat tidak meniru merek mana pun.' },
     { stage: 'L2', finding: 'none', summaryKey: 'Tidak ada tanda mencurigakan di isi halaman.' },
-    { stage: 'L3', finding: 'skipped', summaryKey: 'trace.L3', skipReasonKey: 'trace.skippedNoConsent' },
-    { stage: 'L4', finding: 'skipped', summaryKey: 'trace.L4', skipReasonKey: 'trace.skippedNoConsent' },
+    { stage: 'L3', finding: 'skipped', summaryKey: 'L3', skipReasonKey: 'skippedNoConsent' },
+    { stage: 'L4', finding: 'skipped', summaryKey: 'L4', skipReasonKey: 'skippedNoConsent' },
   ],
   source: 'rules',
 };
@@ -51,7 +51,7 @@ export const fixtureS3CautionL4Pending: Verdict = {
   status: 'caution',
   reasons: ['Ada tanda janggal di isi halaman. Pemeriksaan AI belum selesai.'],
   trace: [
-    { stage: 'L0', finding: 'none', summaryKey: 'trace.L0' },
+    { stage: 'L0', finding: 'none', summaryKey: 'L0' },
     { stage: 'L1', finding: 'none', summaryKey: 'Alamat tidak meniru merek mana pun.' },
     {
       stage: 'L2',
@@ -59,7 +59,7 @@ export const fixtureS3CautionL4Pending: Verdict = {
       summaryKey: 'Halaman meminta kode OTP di luar alur resmi.',
       technical: { signal: 'H3', value: 'input[autocomplete=one-time-code]' },
     },
-    { stage: 'L3', finding: 'skipped', summaryKey: 'trace.L3', skipReasonKey: 'trace.skippedNoConsent' },
+    { stage: 'L3', finding: 'skipped', summaryKey: 'L3', skipReasonKey: 'skippedNoConsent' },
     { stage: 'L4', finding: 'none', summaryKey: 'Menunggu hasil pemeriksaan AI…' },
   ],
   source: 'rules',
@@ -72,7 +72,7 @@ export const fixtureS5FloorInjection: Verdict = {
     'Tulisan di laman mencoba memengaruhi penilaian AI dan diabaikan.',
   ],
   trace: [
-    { stage: 'L0', finding: 'none', summaryKey: 'trace.L0' },
+    { stage: 'L0', finding: 'none', summaryKey: 'L0' },
     { stage: 'L1', finding: 'soft', summaryKey: 'Nama dibuat mirip merek resmi.' },
     {
       stage: 'L2',
@@ -89,7 +89,7 @@ export const fixtureS5FloorInjection: Verdict = {
     {
       stage: 'L4',
       finding: 'soft',
-      summaryKey: 'trace.injectionIgnored',
+      summaryKey: 'injectionIgnored',
       technical: { signal: 'prompt-injection', tool: 'gemini' },
     },
   ],
@@ -103,10 +103,10 @@ export const fixtureS6Official: Verdict = {
   reasons: ['Alamat ini terdaftar sebagai kanal resmi BCA.'],
   trace: [
     { stage: 'L0', finding: 'hard', summaryKey: 'Alamat cocok dengan daftar kanal resmi.', technical: { value: 'bca.co.id' } },
-    { stage: 'L1', finding: 'skipped', summaryKey: 'trace.L1', skipReasonKey: 'Tidak diperlukan untuk kanal resmi.' },
-    { stage: 'L2', finding: 'skipped', summaryKey: 'trace.L2', skipReasonKey: 'Tidak diperlukan untuk kanal resmi.' },
-    { stage: 'L3', finding: 'skipped', summaryKey: 'trace.L3', skipReasonKey: 'Tidak diperlukan untuk kanal resmi.' },
-    { stage: 'L4', finding: 'skipped', summaryKey: 'trace.L4', skipReasonKey: 'Tidak diperlukan untuk kanal resmi.' },
+    { stage: 'L1', finding: 'skipped', summaryKey: 'L1', skipReasonKey: 'Tidak diperlukan untuk kanal resmi.' },
+    { stage: 'L2', finding: 'skipped', summaryKey: 'L2', skipReasonKey: 'Tidak diperlukan untuk kanal resmi.' },
+    { stage: 'L3', finding: 'skipped', summaryKey: 'L3', skipReasonKey: 'Tidak diperlukan untuk kanal resmi.' },
+    { stage: 'L4', finding: 'skipped', summaryKey: 'L4', skipReasonKey: 'Tidak diperlukan untuk kanal resmi.' },
   ],
   source: 'rules',
   claimedBrand: {
@@ -148,3 +148,4 @@ export const fixtures = {
 } as const;
 
 export type FixtureKey = keyof typeof fixtures;
+

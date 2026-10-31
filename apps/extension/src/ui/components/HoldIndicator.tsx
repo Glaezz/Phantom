@@ -2,7 +2,6 @@ import { useEffect, useImperativeHandle, useRef, useState, forwardRef } from 're
 import type { Verdict } from '../types';
 import { copy } from '../copy.id';
 import { Button } from './Button';
-import './HoldIndicator.css';
 
 // Kontrak Design.md §6.4. Durasi tetap 6 dtk. Hanya tombol Batal.
 // Pemanggil memicu resolve() lewat ref saat hasil (fixture) L4 tersedia:

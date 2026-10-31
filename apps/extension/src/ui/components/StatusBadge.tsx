@@ -1,7 +1,6 @@
 import type { Status } from '../types';
 import { copy } from '../copy.id';
 import { StatusIcon } from './StatusIcon';
-import './StatusBadge.css';
 
 // Kontrak Design.md §6.1: pil status, ikon + kata pendek (DS-02), warna lewat pola var(--${status}-*) (DS-41).
 export function StatusBadge({

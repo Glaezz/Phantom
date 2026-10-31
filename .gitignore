@@ -6,3 +6,5 @@ dist
 *.zip
 .output
 .wxt
+.agents
+AGENTS.md

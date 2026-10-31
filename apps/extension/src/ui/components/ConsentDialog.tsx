@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { copy } from '../copy.id';
 import { Button } from './Button';
-import './ConsentDialog.css';
 
 // Kontrak Design.md §6.10: dua tombol setara, menolak tanpa galat (DS-11).
 export function ConsentDialog({

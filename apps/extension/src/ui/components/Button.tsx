@@ -1,7 +1,6 @@
 import { forwardRef } from 'react';
 import type { Status } from '../types';
 import { copy } from '../copy.id';
-import './Button.css';
 
 // Kontrak Design.md §6.2. Varian status memakai var(--${status}-strong|on) (DS-41).
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

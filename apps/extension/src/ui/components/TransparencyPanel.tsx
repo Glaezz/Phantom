@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 import type { Verdict, TraceStep } from '../types';
 import { copy } from '../copy.id';
 import { StatusBadge } from './StatusBadge';
-import './TransparencyPanel.css';
 
 // Kontrak Design.md §6.6. Urutan isi tetap: badge → ringkasan → langkah L0-L4 → kartu floor → sumber → kalimat DS-09.
 export function TransparencyPanel({
@@ -44,11 +43,24 @@ export function TransparencyPanel({
         <h2 id="ph-panel-title" className="ph-panel-title" tabIndex={-1} ref={titleRef}>
           {copy.panel.title}
         </h2>
-        <StatusBadge status={verdict.status} size="sm" />
         <button className="ph-panel-close" onClick={onClose} aria-label={copy.panel.close}>
-          ✕
+          <svg
+            width={16}
+            height={16}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
         </button>
       </div>
+
+      <div className="ph-panel-status"><StatusBadge status={verdict.status} size="sm" /></div>
 
       <section className="ph-panel-section">
         <h3 className="ph-panel-subtitle">{copy.panel.summary}</h3>
@@ -93,9 +105,10 @@ function TraceRow({ step }: { step: TraceStep }) {
       <span className="ph-trace-marker" aria-hidden="true" />
       <div className="ph-trace-body">
         <div className="ph-trace-head">
-          <span className="ph-trace-label">{label}</span>
+          <span className="ph-trace-label">{copy.trace[step.stage]}</span>
           <span className="ph-trace-stage">{step.stage}</span>
         </div>
+        {label !== copy.trace[step.stage] && <p className="ph-trace-summary">{label}</p>}
         {step.finding === 'skipped' && step.skipReasonKey && (
           <p className="ph-trace-skip">
             {(copy.trace as Record<string, string>)[step.skipReasonKey] ?? step.skipReasonKey}

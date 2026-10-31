@@ -3,7 +3,6 @@ import type { Verdict } from '../types';
 import { copy } from '../copy.id';
 import { StatusIcon } from './StatusIcon';
 import { Button } from './Button';
-import './VerdictBanner.css';
 
 // Kontrak Design.md §6.3. Hanya untuk caution/danger (DS-07).
 // Gate: Batal Kirim fokus awal & paling menonjol (DS-03); Tetap Kirim 2 ketukan di danger (DS-04).
@@ -107,7 +106,6 @@ export function VerdictBanner({
           <StatusIcon status={status} size={28} />
           <h2 id="ph-banner-title" className="ph-banner-title">
             {copy.status[status].title}
-            {isGate ? ` — ${copy.gate.held}` : ''}
           </h2>
           {mode === 'info' && onDismiss && (
             <button
@@ -115,10 +113,23 @@ export function VerdictBanner({
               aria-label={copy.gate.closeAlert}
               onClick={onDismiss}
             >
-              ✕
+              <svg
+                width={16}
+                height={16}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
             </button>
           )}
         </div>
+        {isGate && <p className="ph-banner-held">{copy.gate.held}</p>}
         <p id="ph-banner-reasons" className="ph-banner-reasons">
           {verdict.reasons.slice(0, 2).join(' ')}
         </p>

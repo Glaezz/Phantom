@@ -2,8 +2,19 @@
 @import '../../src/ui/components/StatusBadge.css';
 @import '../../src/ui/components/Button.css';
 
+html, body, #root {
+  margin: 0;
+  background: var(--paper);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color-scheme: light dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+
 .popup {
-  width: 360px;
+  width: var(--popup-width);
   padding: var(--s-4);
   font-family: var(--font-ui);
   color: var(--text);
@@ -12,16 +23,86 @@
   flex-direction: column;
   gap: var(--s-3);
 }
-.popup-title {
-  margin: 0;
-  font-size: var(--fs-h1);
-  font-weight: 700;
+.popup-header {
+  display: flex;
+  align-items: center;
 }
-.popup-desc {
+.popup-logo {
+  height: var(--s-8);
+  width: auto;
+  display: block;
+}
+/* DS-31: mode gelap, logo dibalik ke varian terang (#F2F2EF/#BDBDB8) via aset terpisah. */
+.popup-logo-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  .popup-logo-light { display: none; }
+  .popup-logo-dark { display: block; }
+}
+.popup-status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-4);
+  background: var(--surface);
+  border: 1px solid var(--ink-300);
+  border-radius: var(--r-lg);
+}
+.popup-action {
+  margin: 0;
+  font-size: var(--fs-body);
+  font-weight: 600;
+  line-height: var(--lh-body);
+  color: var(--text);
+}
+.popup-detail {
   margin: 0;
   font-size: var(--fs-caption);
   color: var(--text-muted);
 }
+.popup-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  margin-top: var(--s-2);
+}
+.popup-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  color: var(--link);
+  cursor: pointer;
+  text-decoration: none;
+}
+.popup-link:hover { text-decoration: underline; }
+.popup-link:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.popup-dev {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  border-top: 1px solid var(--ink-200);
+  padding-top: var(--s-3);
+}
+.popup-dev-title {
+  margin: 0;
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  list-style: none;
+}
+.popup-dev-title::-webkit-details-marker { display: none; }
+.popup-dev-title:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.popup-dev[open] .popup-dev-title { margin-bottom: var(--s-2); }
 .popup-list {
   list-style: none;
   margin: 0;

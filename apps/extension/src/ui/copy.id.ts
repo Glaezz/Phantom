@@ -82,7 +82,7 @@ export const copy = {
     steps: ['Mengecek alamat situs', 'Mengecek isi laman', 'Menanyakan ke AI (bila perlu)'],
     slow: 'Sedikit lebih lama dari biasanya…',
     copyResult: 'Salin hasil',
-    copied: 'Tersalin ✓',
+    copied: 'Tersalin',
     officialChannels: 'Kanal resmi {brand}',
     nextSteps: 'Apa yang sebaiknya Anda lakukan?',
     spaLimit: 'Untuk laman yang dibangun dengan JavaScript penuh, hasil paling lengkap diperoleh lewat ekstensi Phantom di komputer.',

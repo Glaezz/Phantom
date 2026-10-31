@@ -34,40 +34,18 @@
 
   /* ukuran sentuh */
   --hit-min:44px;
+  --popup-width:360px; --panel-width:400px;
+  --primary-bg:var(--ink-900); --primary-fg:var(--surface); --primary-hover:var(--ink-800);
 }
 
-/* Font lokal (DS-50) — berkas di web_accessible_resources */
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/Inter-400.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/Inter-600.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/Inter-700.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("/fonts/JetBrainsMono-500.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
+/* Font lokal (DS-50): @font-face sengaja TIDAK di file ini.
+   PostCSS mencoba resolve url() sebagai path file; chrome-extension:// tidak bisa.
+   Font didaftarkan runtime lewat <style> dengan browser.runtime.getURL — lihat
+   entrypoints/content.tsx (overlay) dan popup/main.tsx (popup). */
 
 @media (prefers-color-scheme: dark) {
   :host, :root {
+    --primary-bg:#F2F2EF; --primary-fg:#202020; --primary-hover:#D6D6D2;
     --paper:#151515; --surface:#1C1C1C; --text:#F2F2EF; --text-muted:#A3A3A0;
     --ink-300:#3A3A38; --ink-200:#2A2A28; --ink-100:#232321;
     --official-fg:#6FD39A; --official-bg:#0F2418; --official-border:#1F4A31; --official-strong:#6FD39A; --official-on:#0F2418;

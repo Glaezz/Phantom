@@ -1,0 +1,29 @@
+@import '../src/ui/tokens.css';
+@import '../src/ui/components/StatusBadge.css';
+@import '../src/ui/components/Button.css';
+@import '../src/ui/components/VerdictBanner.css';
+@import '../src/ui/components/HoldIndicator.css';
+@import '../src/ui/components/FieldCallout.css';
+@import '../src/ui/components/TransparencyPanel.css';
+@import '../src/ui/components/ConsentDialog.css';
+
+/* DS-22: isolasi penuh dari gaya situs; token didefinisikan pada :host lewat tokens.css */
+:host {
+  all: initial;
+  z-index: 2147483647;
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text);
+  color-scheme: light dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+button, input, select, textarea { font: inherit; }
+.ph-surface {
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text);
+}
+

@@ -69,13 +69,23 @@
   line-height: var(--lh-tight);
 }
 
+.ph-banner-held {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--fs-h2);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
 .ph-banner-close {
   width: var(--hit-min);
   height: var(--hit-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   background: transparent;
   color: var(--text-muted);
-  font-size: var(--fs-body);
   cursor: pointer;
   border-radius: var(--r-md);
 }

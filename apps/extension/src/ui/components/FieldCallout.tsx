@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Status } from '../types';
 import { copy } from '../copy.id';
-import './FieldCallout.css';
 
 // Kontrak Design.md §6.5. Maks 1 per laman per sesi; posisi dari getBoundingClientRect (ARC-06/DS-05: tanpa .value).
 export function FieldCallout({

@@ -24,8 +24,8 @@
 .ph-btn:active:not(:disabled) { transform: translateY(1px); }
 .ph-btn:disabled { opacity: 0.45; cursor: default; }
 
-.ph-btn-primary { background: var(--ink-900); color: var(--surface); }
-.ph-btn-primary:hover:not(:disabled) { background: var(--ink-800); }
+.ph-btn-primary { background: var(--primary-bg); color: var(--primary-fg); }
+.ph-btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
 
 .ph-btn-status[data-status='official'] { background: var(--official-strong); color: var(--official-on); }
 .ph-btn-status[data-status='neutral']  { background: var(--neutral-strong);  color: var(--neutral-on); }
