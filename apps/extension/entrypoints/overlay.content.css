@@ -1,5 +1,6 @@
 @import '../src/ui/tokens.css';
 @import '../src/ui/components/StatusBadge.css';
+@import '../src/ui/components/StatusPill.css';
 @import '../src/ui/components/Button.css';
 @import '../src/ui/components/VerdictBanner.css';
 @import '../src/ui/components/HoldIndicator.css';

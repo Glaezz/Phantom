@@ -71,6 +71,11 @@ export default function App() {
               {copy.popup.officialOf.replace('{brand}', verdict.claimedBrand.name)}
             </p>
           )}
+          {(verdict.status === 'caution' || verdict.status === 'danger') && (
+            <ul className="popup-detail">
+              {verdict.reasons.slice(0, 2).map((reason) => <li key={reason}>{reason}</li>)}
+            </ul>
+          )}
           {verdict.status === 'neutral' && (
             <p className="popup-detail">{copy.status.neutral.title}</p>
           )}

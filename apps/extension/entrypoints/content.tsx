@@ -1,5 +1,3 @@
-// Fase 3: interaksi nyata di laman, masih memakai fixture (bukan analisis asli).
-// Fase 4 mengganti fixture dengan analyzeCurrentPage() dari packages/core.
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { createShadowRootUi } from 'wxt/utils/content-script-ui/shadow-root';
@@ -15,15 +13,28 @@ import { TransparencyPanel } from '../src/ui/components/TransparencyPanel';
 import { FieldCallout } from '../src/ui/components/FieldCallout';
 import { ConsentDialog } from '../src/ui/components/ConsentDialog';
 import { HoldIndicator, type HoldIndicatorHandle } from '../src/ui/components/HoldIndicator';
+import { StatusPill } from '../src/ui/components/StatusPill';
 
 const CONSENT_STORAGE_KEY = 'phantom:consentShown';
+const DISMISS_SESSION_KEY = `phantom:bannerDismissed:${location.origin}`;
 
 type Panel =
   | { kind: 'none' }
-  | { kind: 'banner-info' }
+  | { kind: 'banner-info' }   // dipakai setelah Batal Kirim (bukan banner visit)
   | { kind: 'banner-gate' }
   | { kind: 'hold' }
-  | { kind: 'transparency' };
+  | { kind: 'transparency'; from: 'gate' | 'visit' };
+
+const STATUS_RANK: Record<Verdict['status'], number> = {
+  official: 0, neutral: 1, caution: 2, danger: 3,
+};
+
+function readDismissed(): boolean {
+  try { return sessionStorage.getItem(DISMISS_SESSION_KEY) === '1'; } catch { return false; }
+}
+function writeDismissed(v: boolean): void {
+  try { v ? sessionStorage.setItem(DISMISS_SESSION_KEY, '1') : sessionStorage.removeItem(DISMISS_SESSION_KEY); } catch { /* noop */ }
+}
 
 function Harness() {
   const [verdict, setVerdict] = React.useState<Verdict | null>(null);
@@ -31,8 +42,10 @@ function Harness() {
   const [calloutRect, setCalloutRect] = React.useState<DOMRect | null>(null);
   const [calloutShown, setCalloutShown] = React.useState(false);
   const [showConsent, setShowConsent] = React.useState(false);
+  const [bannerDismissed, setBannerDismissed] = React.useState<boolean>(readDismissed);
   const pendingSubmit = useRefNull<HTMLFormElement>();
   const holdRef = React.useRef<HoldIndicatorHandle>(null);
+  const prevStatusRef = React.useRef<Verdict['status'] | null>(null);
 
   // --- Analisis L0–L2 nyata dari core; simpan hasil terakhir untuk popup. ---
   React.useEffect(() => {
@@ -77,6 +90,17 @@ function Harness() {
       browser.runtime.onMessage.removeListener(onMsg);
     };
   }, []);
+
+  // Status memburuk → reset dismissed supaya banner Bahaya kembali muncul.
+  React.useEffect(() => {
+    if (!verdict) return;
+    const prev = prevStatusRef.current;
+    if (prev && STATUS_RANK[verdict.status] > STATUS_RANK[prev]) {
+      writeDismissed(false);
+      setBannerDismissed(false);
+    }
+    prevStatusRef.current = verdict.status;
+  }, [verdict]);
 
   // --- Consent sekali per perangkat (chrome.storage.local) ---
   React.useEffect(() => {
@@ -134,6 +158,22 @@ function Harness() {
     form?.submit();
   };
 
+  const dismissVisitBanner = () => {
+    writeDismissed(true);
+    setBannerDismissed(true);
+  };
+
+  // Banner visit otomatis: hanya danger + belum ditutup di sesi ini + tidak sedang menangani panel lain.
+  const showVisitBanner =
+    verdict?.status === 'danger' && !bannerDismissed && panel.kind === 'none';
+
+  // Pil kecil: caution selalu, danger saat banner sudah ditutup. Sembunyikan jika panel lain terbuka.
+  const showPill =
+    verdict &&
+    (verdict.status === 'caution' || (verdict.status === 'danger' && bannerDismissed)) &&
+    panel.kind === 'none' &&
+    !showVisitBanner;
+
   return (
     <>
       {showConsent && (
@@ -142,13 +182,33 @@ function Harness() {
 
       {/* Netral/Resmi tanpa UI overlay (DS-07) — status terlihat di popup */}
 
+      {verdict && showVisitBanner && (
+        <VerdictBanner
+          verdict={verdict}
+          mode="info"
+          surface="overlay"
+          onWhy={() => setPanel({ kind: 'transparency', from: 'visit' })}
+          onDismiss={dismissVisitBanner}
+        />
+      )}
+
+      {verdict && showPill && (
+        <StatusPill
+          status={verdict.status as 'caution' | 'danger'}
+          onOpen={() => setPanel({ kind: 'transparency', from: 'visit' })}
+        />
+      )}
+
       {verdict && panel.kind === 'banner-info' && (
         <VerdictBanner
           verdict={verdict}
           mode="info"
           surface="overlay"
-          onWhy={() => setPanel({ kind: 'transparency' })}
-          onDismiss={() => setPanel({ kind: 'none' })}
+          onWhy={() => setPanel({ kind: 'transparency', from: 'visit' })}
+          onDismiss={() => {
+            dismissVisitBanner();
+            setPanel({ kind: 'none' });
+          }}
         />
       )}
 
@@ -159,7 +219,7 @@ function Harness() {
           surface="overlay"
           onCancelSubmit={cancelSubmit}
           onContinueSubmit={continueSubmit}
-          onWhy={() => setPanel({ kind: 'transparency' })}
+          onWhy={() => setPanel({ kind: 'transparency', from: 'gate' })}
         />
       )}
 
@@ -186,13 +246,7 @@ function Harness() {
         <TransparencyPanel
           verdict={verdict}
           surface="overlay"
-          onClose={() =>
-            setPanel(
-              verdict.status === 'caution' || verdict.status === 'danger'
-                ? { kind: 'banner-info' }
-                : { kind: 'none' },
-            )
-          }
+          onClose={() => setPanel({ kind: panel.from === 'gate' ? 'banner-gate' : 'none' })}
         />
       )}
 

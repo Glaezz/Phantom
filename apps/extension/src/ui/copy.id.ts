@@ -12,6 +12,7 @@ export const copy = {
     caution:  'Periksa dulu sebelum mengisi data penting.',
     danger:   'Jangan isi atau kirim data di laman ini.',
   },
+  pill: { open: '{status}, buka rincian' },
   gate: {
     held: 'Pengiriman ditahan',
     cancel: 'Batal Kirim',
