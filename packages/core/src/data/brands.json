@@ -1147,7 +1147,9 @@
     "id": "google_oauth",
     "name": "Google OAuth",
     "category": "oauth_payment",
-    "officialDomains": [],
+    "officialDomains": [
+      "google.com"
+    ],
     "officialPhones": [],
     "keywords": [
       "google"
