@@ -1,10 +1,11 @@
-import React from 'react';
+﻿import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { mergeProxyResult, needsDeepCheck, type AnalyzeResponse } from '@phantom/core';
 import { createShadowRootUi } from 'wxt/utils/content-script-ui/shadow-root';
 import { analyzeCurrentPage } from '../src/analyze/analyzePage';
-import { toVerdict } from '../src/analyze/toVerdict';
-import { SENSITIVE_SELECTOR } from '../src/analyze/extractFeatures';
-import { isL4Pending } from '../src/__fixtures__/verdicts';
+import { analyzeDeep } from '../src/analyze/proxyClient';
+import { toVerdict, type DeepSkipReason, type ExtraTrace } from '../src/analyze/toVerdict';
+import { extractFeatures, SENSITIVE_SELECTOR } from '../src/analyze/extractFeatures';
 import type { Verdict } from '../src/ui/types';
 import { fontFaceCss } from '../src/ui/fonts';
 import { VerdictBanner } from '../src/ui/components/VerdictBanner';
@@ -14,8 +15,30 @@ import { ConsentDialog } from '../src/ui/components/ConsentDialog';
 import { HoldIndicator, type HoldIndicatorHandle } from '../src/ui/components/HoldIndicator';
 import { StatusPill } from '../src/ui/components/StatusPill';
 
-const CONSENT_STORAGE_KEY = 'phantom:consentShown';
+const DEEP_CHECK_KEY = 'phantom:deepCheck';
+// Key lama (EXT-06) dibaca sekali untuk migrasi agar pengguna tidak melihat dialog lagi.
+const LEGACY_CONSENT_KEY = 'phantom:consentShown';
 const DISMISS_SESSION_KEY = `phantom:bannerDismissed:${location.origin}`;
+
+// Deteksi lanjutan (L3+L4) aktif? Satu sumber kebenaran untuk overlay dan popup.
+async function readDeepCheck(): Promise<boolean> {
+  try {
+    const res = await browser.storage.local.get([DEEP_CHECK_KEY, `${LEGACY_CONSENT_KEY}:allow`]);
+    const current = res[DEEP_CHECK_KEY];
+    if (typeof current === 'boolean') return current;
+    return res[`${LEGACY_CONSENT_KEY}:allow`] === true;
+  } catch {
+    return false;
+  }
+}
+
+// Proxy membalas tanpa `skipReason` ketika aturan lokal sudah memutuskan (CORE-09):
+// L3/L4 memang tidak dijalankan, bukan gagal. Jangan biarkan panel bilang "tidak dapat diselesaikan".
+function inferredSkipReason(data: AnalyzeResponse): DeepSkipReason | undefined {
+  if (data.final.skipReason) return data.final.skipReason;
+  if (data.final.source === 'rules' && !data.l3?.length) return 'notNeeded';
+  return undefined;
+}
 
 type Panel =
   | { kind: 'none' }
@@ -45,15 +68,22 @@ function Harness() {
   const pendingSubmit = useRefNull<HTMLFormElement>();
   const holdRef = React.useRef<HoldIndicatorHandle>(null);
   const prevStatusRef = React.useRef<Verdict['status'] | null>(null);
+  const consentRef = React.useRef(false);
+  const deepAbortRef = React.useRef<AbortController | null>(null);
+  // Referensi stabil ke verdict terkini lalu dipegang MutationObserver/pesan popup.
+  // Ditulis dari effect [verdict] supaya popup menerima hasil L3/L4, bukan ulang L0â€“L2.
+  const lastVerdictRef = React.useRef<Verdict | null>(null);
+  // Deep check atas permintaan submit sudah berjalan/selesai untuk verdict ini.
+  const deepSettled = React.useRef(false);
+  // Dinaikkan saat popup mengubah phantom:deepCheck â†’ memicu effect di bawah.
+  const [deepTick, setDeepTick] = React.useState(0);
 
-  // --- Analisis L0–L2 nyata dari core; simpan hasil terakhir untuk popup. ---
+  // --- Analisis L0â€“L2 nyata dari core; simpan hasil terakhir untuk popup. ---
   React.useEffect(() => {
-    let lastVerdict: Verdict | null = null;
-
     const run = () => {
-      const result = analyzeCurrentPage();
-      lastVerdict = toVerdict(result);
-      setVerdict(lastVerdict);
+      // Navigasi/penyesuaian DOM mengubah bukti â†’ temuan lama tidak berlaku lagi.
+      deepSettled.current = false;
+      setVerdict(toVerdict(analyzeCurrentPage()));
     };
     run();
 
@@ -85,8 +115,12 @@ function Harness() {
 
     // Popup menerima verdict siap tampil agar tidak memuat mesin core kedua kali.
     const onMsg = (msg: { type: string }) => {
-      if (msg.type !== 'phantom:getStatus') return;
-      return Promise.resolve(lastVerdict);
+      if (msg.type === 'phantom:getStatus') return Promise.resolve(lastVerdictRef.current);
+      if (msg.type === 'phantom:openDetail') {
+        setPanel({ kind: 'transparency', from: 'visit' });
+        return Promise.resolve(true);
+      }
+      return undefined;
     };
     browser.runtime.onMessage.addListener(onMsg);
 
@@ -100,9 +134,10 @@ function Harness() {
     };
   }, []);
 
-  // Status memburuk → reset dismissed supaya banner Bahaya kembali muncul.
+  // Status memburuk â†’ reset dismissed supaya banner Bahaya kembali muncul.
   React.useEffect(() => {
     if (!verdict) return;
+    lastVerdictRef.current = verdict;
     const prev = prevStatusRef.current;
     if (prev && STATUS_RANK[verdict.status] > STATUS_RANK[prev]) {
       writeDismissed(false);
@@ -111,17 +146,70 @@ function Harness() {
     prevStatusRef.current = verdict.status;
   }, [verdict]);
 
-  // --- Consent sekali per perangkat (chrome.storage.local) ---
+  // --- Deteksi lanjutan: izin sekali lewat dialog, bisa diubah dari popup ---
   React.useEffect(() => {
-    browser.storage.local.get(CONSENT_STORAGE_KEY).then((res) => {
-      if (!res[CONSENT_STORAGE_KEY]) setShowConsent(true);
+    void readDeepCheck().then((enabled) => {
+      consentRef.current = enabled;
     });
+    browser.storage.local.get(LEGACY_CONSENT_KEY).then((res) => {
+      if (!res[LEGACY_CONSENT_KEY]) setShowConsent(true);
+    });
+
+    // Popup mengubah phantom:deepCheck â†’ berlaku tanpa reload halaman.
+    const onChanged = (changes: Record<string, { newValue?: unknown }>, area: string) => {
+      if (area !== 'local' || !changes[DEEP_CHECK_KEY]) return;
+      consentRef.current = changes[DEEP_CHECK_KEY].newValue === true;
+      // Mati â†’ temuan lama tidak berlaku; nyala â†’ boleh diperiksa ulang.
+      setDeepTick((n) => n + 1);
+    };
+    browser.storage.onChanged.addListener(onChanged);
+    return () => browser.storage.onChanged.removeListener(onChanged);
   }, []);
 
-  const dismissConsent = (allowed: boolean) => {
-    browser.storage.local.set({ [CONSENT_STORAGE_KEY]: true, [`${CONSENT_STORAGE_KEY}:allow`]: allowed });
+  const setDeepCheck = (enabled: boolean) => {
+    browser.storage.local.set({
+      [DEEP_CHECK_KEY]: enabled,
+      [LEGACY_CONSENT_KEY]: true,
+    });
+    consentRef.current = enabled;
     setShowConsent(false);
   };
+
+  // Dinyalakan dari popup saat laman ini sudah berisiko: jalankan L3/L4 sekarang juga,
+  // selain saat submit, supaya pengguna melihat efeknya tanpa reload.
+  React.useEffect(() => {
+    if (!consentRef.current || deepSettled.current) return;
+    if (panel.kind !== 'none' && panel.kind !== 'banner-info') return;
+    // Popup menutup dialog; jangan memeriksa sebelum pengguna sempat melihat hasilnya.
+    if (showConsent) return;
+    const local = analyzeCurrentPage();
+    if (!needsDeepCheck(local)) return;
+
+    const controller = new AbortController();
+    deepSettled.current = true;
+    void analyzeDeep(extractFeatures(), { cloud: true, domainAge: true }, controller.signal).then(
+      (res) => {
+        if (controller.signal.aborted) {
+          deepSettled.current = false;
+          return;
+        }
+        if (!res.ok) {
+          deepSettled.current = false;
+          // Proxy gagal/mati: tunjukkan alasan sebenarnya, bukan "izin belum diberikan".
+          setVerdict(toVerdict(local, {}, { skipReason: 'proxyUnavailable' }));
+          return;
+        }
+        setVerdict(
+          toVerdict(local, { l3: res.data.l3, l4: res.data.l4 }, {
+            status: mergeProxyResult(local, res.data),
+            source: res.data.final.source,
+            skipReason: inferredSkipReason(res.data),
+          }),
+        );
+      },
+    );
+    return () => controller.abort();
+  }, [verdict, deepTick, showConsent]);
 
   // --- FieldCallout: fokus kolom sensitif, maks 1 per laman per sesi ---
   React.useEffect(() => {
@@ -137,13 +225,14 @@ function Harness() {
     return () => document.removeEventListener('focus', onFocus, true);
   }, [verdict, calloutShown]);
 
-  // --- Soft gate: submit laman ditahan ---
+  // --- Soft gate: submit laman ditahan (EXT-04) ---
   React.useEffect(() => {
     if (!verdict || (verdict.status !== 'caution' && verdict.status !== 'danger')) return;
     const onSubmit = (e: SubmitEvent) => {
       e.preventDefault();
       pendingSubmit.current = e.target as HTMLFormElement;
-      if (verdict.status === 'caution' && isL4Pending(verdict)) {
+      // Hati-hati + kolom kredensial: verifikasi L3/L4 dulu, maks 6 dtk.
+      if (verdict.status === 'caution' && needsAgentCheck()) {
         setPanel({ kind: 'hold' });
       } else {
         setPanel({ kind: 'banner-gate' });
@@ -153,9 +242,82 @@ function Harness() {
     return () => document.removeEventListener('submit', onSubmit, true);
   }, [verdict]);
 
+  // L3/L4 hanya berarti untuk laman yang meminta kredensial (CORE-07).
+  const needsAgentCheck = () => {
+    const { needsAgent } = analyzeCurrentPage();
+    return needsAgent;
+  };
+
+  // Hasil deep check (atau kegagalannya) selalu menyelesaikan hold; tidak pernah menggantung.
+  const finishDeep = (payload: {
+    extra: ExtraTrace;
+    status: Verdict['status'];
+    source: Verdict['source'];
+    skipReason?: DeepSkipReason;
+    result: Parameters<typeof toVerdict>[0];
+  }) => {
+    const next = toVerdict(payload.result, payload.extra, {
+      status: payload.status,
+      source: payload.source,
+      skipReason: payload.skipReason,
+    });
+    setVerdict(next);
+    holdRef.current?.resolve(next);
+  };
+
+  // Hold dibuka â†’ jalankan L3/L4, lalu selesaikan hold.
+  React.useEffect(() => {
+    if (panel.kind !== 'hold' || !verdict) return;
+
+    const local = analyzeCurrentPage();
+    const controller = new AbortController();
+    deepAbortRef.current = controller;
+
+    const settleLocal = () =>
+      finishDeep({
+        extra: {},
+        status: local.status,
+        source: 'rules',
+        skipReason: 'deepCheckDisabled',
+        result: local,
+      });
+
+    if (!consentRef.current) {
+      settleLocal();
+      return;
+    }
+    const features = extractFeatures();
+    void analyzeDeep(features, { cloud: true, domainAge: true }, controller.signal).then((res) => {
+      deepSettled.current = true;
+      if (res.ok && !controller.signal.aborted) {
+        finishDeep({
+          extra: { l3: res.data.l3, l4: res.data.l4 },
+          status: mergeProxyResult(local, res.data),
+          source: res.data.final.source,
+          skipReason: inferredSkipReason(res.data),
+          result: local,
+        });
+        return;
+      }
+      // Gagal atau dibatalkan: tetap selesaikan hold dengan hasil aturan lokal.
+      finishDeep({
+        extra: {},
+        status: local.status,
+        source: 'rules',
+        skipReason: controller.signal.aborted ? undefined : 'proxyUnavailable',
+        result: local,
+      });
+    });
+
+    return () => {
+      controller.abort();
+    };
+  }, [panel.kind, verdict]);
+
   if (!verdict && !showConsent) return null;
 
   const cancelSubmit = () => {
+    deepAbortRef.current?.abort();
     pendingSubmit.current = null;
     setPanel(verdict?.status === 'caution' || verdict?.status === 'danger' ? { kind: 'banner-info' } : { kind: 'none' });
   };
@@ -186,10 +348,10 @@ function Harness() {
   return (
     <>
       {showConsent && (
-        <ConsentDialog onAllow={() => dismissConsent(true)} onDeny={() => dismissConsent(false)} />
+        <ConsentDialog onAllow={() => setDeepCheck(true)} onDeny={() => setDeepCheck(false)} />
       )}
 
-      {/* Netral/Resmi tanpa UI overlay (DS-07) — status terlihat di popup */}
+      {/* Netral/Resmi tanpa UI overlay (DS-07) â€” status terlihat di popup */}
 
       {verdict && showVisitBanner && (
         <VerdictBanner
@@ -266,13 +428,17 @@ function Harness() {
   );
 }
 
-// L4 belum ada (proxy belum dibangun). hold tidak pernah dipicu; status caution langsung ke gate.
+// Menjembatani hold ke ref Harness: resolve() selalu dipanggil, baik L3/L4 berhasil maupun gagal.
 const HoldIndicatorBridge = React.forwardRef<
   HoldIndicatorHandle,
   { verdict: Verdict; onCancel: () => void; onResolved: (v: Verdict) => void }
 >(function HoldIndicatorBridge({ onCancel, onResolved }, ref) {
   const innerRef = React.useRef<HoldIndicatorHandle>(null);
-  React.useImperativeHandle(ref, () => innerRef.current as HoldIndicatorHandle, []);
+  React.useImperativeHandle(
+    ref,
+    () => ({ resolve: (v: Verdict) => innerRef.current?.resolve(v) }),
+    [],
+  );
 
   return <HoldIndicator ref={innerRef} anchor={null} onCancel={onCancel} onResolve={onResolved} />;
 });

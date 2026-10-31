@@ -82,7 +82,8 @@ html, body, #root {
 .popup-link {
   background: none;
   border: none;
-  padding: 0;
+  padding: var(--s-2) 0;
+  min-height: var(--hit-min);
   font-family: var(--font-ui);
   font-size: var(--fs-caption);
   color: var(--link);
@@ -91,6 +92,33 @@ html, body, #root {
 }
 .popup-link:hover { text-decoration: underline; }
 .popup-link:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.popup-settings {
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface);
+  border: 1px solid var(--ink-200);
+  border-radius: var(--r-lg);
+}
+.popup-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: var(--hit-min);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-body);
+  color: var(--text);
+  cursor: pointer;
+}
+.popup-toggle input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--ink-900);
+}
+.popup-toggle input:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
 }

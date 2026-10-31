@@ -14,6 +14,8 @@ export default defineConfig({
     name: 'Phantom',
     description: 'Penjaga Laman - verifikasi kanal resmi sebelum Anda mengirim data.',
     permissions: ['storage'],
+    // Dev proxy (L3/L4). Tanpa ini fetch content script ke localhost diblokir browser.
+    host_permissions: ['http://localhost:8787/*'],
     icons,
     action: { default_icon: icons },
     web_accessible_resources: [

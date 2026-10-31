@@ -10,7 +10,7 @@
 }
 
 .ph-consent {
-  max-width: 420px;
+  max-width: 460px;
   width: 100%;
   padding: var(--s-6);
   background: var(--surface);
@@ -43,11 +43,15 @@
 }
 
 .ph-consent-actions {
-  display: flex;
-  gap: var(--s-3);
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-2);
 }
 .ph-consent-actions .ph-btn {
-  flex: 1;
-  min-width: 160px;
+  width: 100%;
+  min-width: 0;
+  min-height: var(--hit-min);
+}
+@media (min-width: 420px) {
+  .ph-consent-actions { grid-template-columns: 1fr 1fr; }
 }

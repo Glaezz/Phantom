@@ -50,6 +50,10 @@ export const copy = {
     L3: 'Umur situs',
     L4: 'Investigasi AI',
     skippedNoConsent: 'Dilewati, izin pemeriksaan lanjutan belum diberikan.',
+    skippedNotNeeded: 'Dilewati, pemeriksaan lanjutan dimatikan di pengaturan.',
+    skippedDecidedByRules: 'Dilewati, pemeriksaan isi halaman sudah memberi vonis pasti.',
+    skippedUnavailable: 'Dilewati, pemeriksaan ini tidak dapat diselesaikan.',
+    cacheHit: 'Hasil AI sebelumnya dipakai ulang.',
     injectionIgnored: 'Laman ini berisi tulisan yang mencoba memengaruhi penilaian AI. Diabaikan.',
   },
   floor: {
