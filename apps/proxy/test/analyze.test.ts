@@ -116,6 +116,8 @@ describe('/api/analyze', () => {
     const body = (await response.json()) as any;
     expect(body.final.source).toBe('rules');
     expect(body.degraded).toEqual(['cloud_consent_missing']);
+    expect(body.final.skipReason).toBe('deepCheckDisabled');
+    expect(body.l4[0].data).toMatchObject({ available: false, skippedBy: 'consent' });
     expect(body.agent).toBeNull();
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -144,8 +146,125 @@ describe('/api/analyze', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
-  it('recomputes from features and ignores an extra client verdict', async () => {
-    const fetchMock = vi.fn();
+  it('analyses the extracted features url, not the request url', async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      if (String(input).includes('rdap.org')) throw new Error('rdap down');
+      throw new Error(`unexpected fetch ${String(input)}`);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const features = pageFeatures({ url: 'https://www.bca.co.id', forms: [] });
+    const response = await post('/api/analyze', analyzeBody('https://evil.example', features));
+    const body = (await response.json()) as any;
+    expect(body.result.status).toBe('official');
+    expect(body.result.page.hostname).toBe('www.bca.co.id');
+  });
+
+  it('ignores a cached verdict written by older rules', async () => {
+    const url = 'https://login-xyz.top/g7';
+    const features = pageFeatures({
+      url,
+      forms: [passwordForm('https://collector.biz.id/post')],
+    });
+    const staleKv = {
+      async get() {
+        return JSON.stringify({
+          status: 'danger',
+          reasons: ['lama'],
+          createdAt: Date.now(),
+          expiresAt: Date.now() + 60_000,
+          rulesVersion: '0.0.1',
+        });
+      },
+      async put() {},
+    } as unknown as KVNamespace;
+    const fetchMock = stubAgentFetch();
+    const env = testEnv({
+      GEMINI_API_KEY: 'gemini-key',
+      GROQ_API_KEY: '',
+      AGENT_DEADLINE_MS: '10',
+      LLM_ATTEMPT_TIMEOUT_MS: '1000',
+      PHANTOM_CACHE: staleKv,
+    });
+    const response = await post('/api/analyze', analyzeBody(url, features), env);
+    const body = (await response.json()) as any;
+    expect(body.final.source).not.toBe('cache');
+    expect(fetchMock).toHaveBeenCalled();
+  });
+
+  it('returns L3 and L4 rows for the transparency panel', async () => {
+    stubAgentFetch();
+    const url = 'https://login-xyz.top/h8';
+    const features = pageFeatures({
+      url,
+      forms: [passwordForm('https://collector.biz.id/post')],
+    });
+    const response = await post(
+      '/api/analyze',
+      analyzeBody(url, features, { cloud: true, domainAge: false }),
+      testEnv({ GEMINI_API_KEY: 'gemini-key', GROQ_API_KEY: '' }),
+    );
+    const body = (await response.json()) as any;
+    expect(Array.isArray(body.l3)).toBe(true);
+    expect(body.l4[0]).toMatchObject({ stage: 'L4', data: { tool: 'agent', verdict: 'danger' } });
+  });
+
+  it('reports L3 as unchecked, not as missing consent, when RDAP fails', async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      if (String(input).includes('rdap.org')) throw new Error('rdap down');
+      return gemini([{ functionCall: { id: 's', name: 'submit_verdict', args: {
+        verdict: 'danger', confidence: 0.9, reasons: ['Form kredensial ke domain lain.'],
+        evidenceRefs: ['get_form_target#1'],
+      } } }]);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const features = pageFeatures({
+      url: 'https://login-xyz.top/j1',
+      forms: [passwordForm('https://collector.biz.id/post')],
+    });
+    const response = await post(
+      '/api/analyze',
+      analyzeBody('https://login-xyz.top/j1', features, { cloud: true, domainAge: true }),
+      testEnv({ GEMINI_API_KEY: 'gemini-key', GROQ_API_KEY: '' }),
+    );
+    const body = (await response.json()) as any;
+    expect(body.degraded).toContain('rdap_unavailable');
+    expect(body.l3).toHaveLength(1);
+    expect(body.l3[0].data).toMatchObject({ tool: 'rdap', available: false, domain: 'login-xyz.top' });
+    expect(body.l3[0].data.skippedBy).toBeUndefined();
+  });
+
+  it('marks L3 as disabled in settings when domain age consent is off', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => { throw new Error('rdap down'); }));
+    const features = pageFeatures({
+      url: 'https://login-xyz.top/k2',
+      forms: [passwordForm('https://collector.biz.id/post')],
+    });
+    const response = await post(
+      '/api/analyze',
+      analyzeBody('https://login-xyz.top/k2', features, { cloud: true, domainAge: false }),
+      testEnv({ GEMINI_API_KEY: '', GROQ_API_KEY: '' }),
+    );
+    const body = (await response.json()) as any;
+    expect(body.final.skipReason).toBe('deepCheckDisabled');
+    expect(body.l3[0].data).toMatchObject({ available: false, skippedBy: 'consent' });
+  });
+
+  it('marks L4 as served from cache on a cache hit', async () => {
+    stubAgentFetch();
+    const url = 'https://login-xyz.top/i9';
+    const features = pageFeatures({
+      url,
+      forms: [passwordForm('https://collector.biz.id/post')],
+    });
+    const env = testEnv({ GEMINI_API_KEY: 'gemini-key', GROQ_API_KEY: '' });
+    await post('/api/analyze', analyzeBody(url, features), env);
+    const second = await post('/api/analyze', analyzeBody(url, features), env);
+    const body = (await second.json()) as any;
+    expect(body.final).toMatchObject({ source: 'cache', skipReason: 'cacheHit' });
+    expect(body.l4[0]).toMatchObject({ stage: 'L4', data: { tool: 'cache' } });
+  });
+
+  it('recomputes from features and ignores an extra client verdict', async () => {    const fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);
     const features = pageFeatures({
       url: 'https://login-xyz.top/b2',

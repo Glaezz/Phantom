@@ -1,7 +1,7 @@
 import { PageFeaturesSchema, type CacheStore } from '@phantom/core';
 import { Hono } from 'hono';
 import { z } from 'zod';
-import { prepareAnalysis, runPreparedAgent } from '../analysis';
+import { prepareAnalysis, runPreparedAgent, traceRows } from '../analysis';
 import { createKvCache } from '../cache/kvCache';
 import { invalidRequest } from '../errors';
 import { createLlmChain } from '../llm/chain';
@@ -99,6 +99,7 @@ analyzeRoute.post('/', async (c) => {
   return c.json({
     result: withAgent.result,
     final: withAgent.final,
+    ...traceRows(withAgent),
     agent: withAgent.agent,
     cache: withAgent.cache,
     degraded: withAgent.degraded,
