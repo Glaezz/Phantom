@@ -90,7 +90,24 @@ export const copy = {
     copyResult: 'Salin hasil',
     copied: 'Tersalin ✓',
     officialChannels: 'Kanal resmi {brand}',
+    officialDomainsLabel: 'Alamat situs resmi',
+    officialPhonesLabel: 'Nomor telepon resmi',
+    officialChannelDefault: 'Kanal resmi terdaftar',
     nextSteps: 'Apa yang sebaiknya Anda lakukan?',
+    nextStepsDanger: [
+      'Jangan klik dan jangan unduh berkas dari tautan ini.',
+      'Jangan berikan PIN, kode OTP, atau kata sandi.',
+      'Buka situs resmi bila Anda butuh layanan: {channel}',
+    ],
+    nextStepsCaution: [
+      'Jangan isi data penting sebelum memastikan keaslian alamat.',
+      'Buka situs lewat kanal resmi yang terdaftar: {channel}',
+      'Tanyakan langsung ke pengirim lewat kanal lain bila ragu.',
+    ],
+    nextStepsNeutral: [
+      'Periksa kembali alamat sebelum Anda mengisi data.',
+      'Jangan berikan PIN atau kode OTP kecuali Anda sudah yakin.',
+    ],
     spaLimit:
       'Untuk laman yang dibangun dengan JavaScript penuh, hasil paling lengkap diperoleh lewat ekstensi Phantom di komputer.',
     budgetLimited:
@@ -100,11 +117,22 @@ export const copy = {
     blockedTarget: 'Alamat ini tidak bisa diperiksa dari Web Cek karena alasan keamanan.',
     offline: 'Anda sedang offline. Sambungkan internet lalu coba lagi.',
   },
+  error: {
+    connectionFailed:
+      'Gagal terhubung ke server pemeriksaan. Periksa koneksi internet Anda lalu coba lagi.',
+    timeout: 'Pemeriksaan membutuhkan waktu terlalu lama. Coba ulangi pemeriksaan.',
+    rulesFallback: 'Layanan internet tidak merespons. Menampilkan hasil pemeriksaan dasar.',
+  },
   parser: {
     found: 'Ditemukan {links} tautan dan {phones} nomor telepon',
     apkWarning: 'Jangan pasang file ini. Undangan sungguhan tidak perlu aplikasi tambahan.',
     phoneUnknown: 'Tidak ada di daftar kanal resmi',
     showAll: 'Lihat semua',
+    showLess: 'Tampilkan lebih sedikit',
+    readOnlyLabel: 'Salinan pesan yang diperiksa',
+  },
+  pasteBox: {
+    examplesLabel: 'Contoh:',
   },
 
   /* Navigasi dan footer bersama (landing, Cek, Unduh) */
@@ -177,6 +205,18 @@ export const copy = {
       'Klik Muat yang belum dipak, lalu pilih folder hasil ekstrak.',
       'Sematkan ikon Phantom di bilah alat peramban.',
     ],
+    stepAlts: [
+      'Langkah 1: Mengunduh berkas zip ekstensi Phantom',
+      'Langkah 2: Mengekstrak berkas zip ke folder komputer',
+      'Langkah 3: Membuka alamat ekstensi di peramban',
+      'Langkah 4: Mengaktifkan sakelar Mode pengembang',
+      'Langkah 5: Menekan tombol Muat yang belum dipak',
+      'Langkah 6: Menyematkan ikon Phantom di bilah alat',
+    ],
+    chromeAddress: 'chrome://extensions',
+    edgeAddress: 'edge://extensions',
+    browserChrome: 'Google Chrome',
+    browserEdge: 'Microsoft Edge',
     stepAddress: 'Salin alamat',
     stepAddressCopied: 'Tersalin ✓',
     helpTitle: 'Butuh bantuan?',

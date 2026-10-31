@@ -33,6 +33,8 @@
 
   /* ukuran sentuh */
   --hit-min:44px;
+  --hit-lg:56px;
+  --bar-accent:6px;
 }
 
 /* Web Cek dan Unduh menimpa skala saja (DS-23) */
