@@ -38,13 +38,13 @@ function startsWithSequence(haystack: string[], needle: string[]): boolean {
 
 function stripLeading(tokens: string[], stopwords: readonly string[]): string[] {
   let index = 0;
-  while (index < tokens.length && stopwords.includes(tokens[index])) index += 1;
+  while (index < tokens.length && stopwords.includes(tokens[index] as string)) index += 1;
   return tokens.slice(index);
 }
 
 function stripTrailing(tokens: string[], stopwords: readonly string[]): string[] {
   let end = tokens.length;
-  while (end > 0 && stopwords.includes(tokens[end - 1])) end -= 1;
+  while (end > 0 && stopwords.includes(tokens[end - 1] as string)) end -= 1;
   return tokens.slice(0, end);
 }
 
