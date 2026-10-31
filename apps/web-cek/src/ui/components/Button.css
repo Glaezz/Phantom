@@ -1,0 +1,92 @@
+.ph-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-height: var(--hit-min);
+  padding: 0 var(--s-5);
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    filter var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease);
+}
+
+.ph-button:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.ph-button:hover:not(:disabled) {
+  filter: brightness(0.96);
+}
+
+.ph-button:active:not(:disabled) {
+  filter: brightness(0.92);
+  transform: translateY(1px);
+}
+
+.ph-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ph-button--primary {
+  min-height: 56px;
+  background: var(--ink-900);
+  color: var(--surface);
+}
+
+/* Di mode gelap --surface mendekati --ink-900; balik agar kontras tetap AA. */
+@media (prefers-color-scheme: dark) {
+  .ph-button--primary {
+    background: var(--text);
+    color: var(--paper);
+  }
+}
+
+.ph-button--status {
+  background: var(--button-bg);
+  color: var(--button-fg);
+}
+
+.ph-button--secondary {
+  background: transparent;
+  border-color: var(--ink-300);
+  color: var(--text);
+}
+
+.ph-button--tertiary {
+  background: transparent;
+  border-color: transparent;
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: var(--s-1);
+}
+
+.ph-button--tertiary:hover:not(:disabled) {
+  text-decoration-color: var(--link);
+}
+
+.ph-button__spinner {
+  width: var(--s-4);
+  height: var(--s-4);
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: var(--r-pill);
+  animation: ph-button-spin 800ms linear infinite;
+}
+
+@keyframes ph-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
