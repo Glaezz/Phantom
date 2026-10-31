@@ -7,10 +7,17 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "sideEffects": false,
   "scripts": {
+    "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "tldts": "^7.4.19",
+    "zod": "^4.6.7"
+  },
   "devDependencies": {
+    "@types/node": "^24.19.2",
     "typescript": "^5.0.0",
     "vitest": "^5.0.5"
   }

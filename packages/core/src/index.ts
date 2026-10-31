@@ -1,19 +1,53 @@
 import brandsData from './data/brands.json';
+import { loadBrands, validateBrandDb } from './brands';
+import { createEngine, type AnalyzeInput, type Engine } from './engine';
+import type { AnalysisResult, Brand } from './schemas';
 
-export interface Brand {
-  id: string;
-  name: string;
-  category: string;
-  officialDomains: string[];
-  officialPhones: string[];
-  keywords: string[];
-  ambiguousToken: boolean;
-}
+export {
+  AgentVerdictSchema,
+  AnalysisResultSchema,
+  BrandSchema,
+  PageFeaturesSchema,
+} from './schemas';
+export type {
+  AgentVerdict,
+  AnalysisResult,
+  Brand,
+  FieldFeature,
+  FormFeature,
+  PageFeatures,
+  SignalHit,
+  SignalId,
+  Status,
+  TraceStep,
+} from './schemas';
 
-export const BRANDS: Brand[] = brandsData as Brand[];
+export { loadBrands, validateBrandDb };
+export { createEngine };
+export type { AnalyzeInput, Engine };
 
-export function isOfficialDomain(hostname: string): boolean {
-  return BRANDS.some(brand => 
-    brand.officialDomains.some(domain => hostname === domain || hostname.endsWith(`.${domain}`))
-  );
+export { normalizeUrlForCache, cacheKey } from './cache-key';
+export { mergeVerdict } from './verdict';
+export type { MergedVerdict } from './verdict';
+export type { OfficialMatch } from './l0';
+
+export type {
+  CacheRecord,
+  CacheStore,
+  DomainAgeLookup,
+  LlmMessage,
+  LlmProvider,
+  LlmRequest,
+  LlmResponse,
+  LlmToolDef,
+  PageFetcher,
+} from './interfaces';
+
+export * from './config';
+
+export const BRANDS: Brand[] = loadBrands(brandsData);
+export const engine: Engine = createEngine(BRANDS);
+
+export function analyze(input: AnalyzeInput): AnalysisResult {
+  return engine.analyze(input);
 }
