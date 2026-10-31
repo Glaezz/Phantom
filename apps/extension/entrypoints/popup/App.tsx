@@ -1,35 +1,47 @@
 import { useState } from 'react';
-import reactLogo from '@/assets/react.svg';
-import wxtLogo from '/wxt.svg';
+import { fixtures, type FixtureKey } from '../../src/__fixtures__/verdicts';
+import { copy } from '../../src/ui/copy.id';
+import { StatusBadge } from '../../src/ui/components/StatusBadge';
 import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0);
+const SCENARIOS: Array<{ key: FixtureKey; label: string }> = [
+  { key: 'S1', label: 'S1 · danger — login tiruan .my.id' },
+  { key: 'S2', label: 'S2 · neutral — startup sah' },
+  { key: 'S3', label: 'S3 · caution — L4 pending' },
+  { key: 'S5', label: 'S5 · floor — prompt injection' },
+  { key: 'S6', label: 'S6 · official — kanal resmi' },
+];
+
+export default function App() {
+  const [last, setLast] = useState<FixtureKey | null>(null);
+
+  const render = async (key: FixtureKey) => {
+    setLast(key);
+    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    if (tab?.id) {
+      await browser.tabs.sendMessage(tab.id, { type: 'phantom:render', fixture: key });
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://wxt.dev" target="_blank">
-          <img src={wxtLogo} className="logo" alt="WXT logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>WXT + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
+    <main className="popup">
+      <h1 className="popup-title">Phantom Dev Harness</h1>
+      <p className="popup-desc">Pilih skenario fixture untuk dirender di tab aktif.</p>
+      <ul className="popup-list">
+        {SCENARIOS.map(({ key, label }) => (
+          <li key={key}>
+            <button className="popup-btn" onClick={() => render(key)}>
+              <StatusBadge status={fixtures[key].status} size="sm" />
+              <span>{label}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      {last && (
+        <p className="popup-last" role="status">
+          Terakhir dirender: {copy.status[fixtures[last].status].short}
         </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the WXT and React logos to learn more
-      </p>
-    </>
+      )}
+    </main>
   );
 }
-
-export default App;

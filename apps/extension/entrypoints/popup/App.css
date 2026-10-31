@@ -1,42 +1,58 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
+@import '../../src/ui/tokens.css';
+@import '../../src/ui/components/StatusBadge.css';
+@import '../../src/ui/components/Button.css';
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.popup {
+  width: 360px;
+  padding: var(--s-4);
+  font-family: var(--font-ui);
+  color: var(--text);
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #54bc4ae0);
+.popup-title {
+  margin: 0;
+  font-size: var(--fs-h1);
+  font-weight: 700;
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.popup-desc {
+  margin: 0;
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
 }
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.popup-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.popup-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  width: 100%;
+  min-height: var(--hit-min);
+  padding: var(--s-2) var(--s-3);
+  background: var(--surface);
+  border: 1px solid var(--ink-300);
+  border-radius: var(--r-md);
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
 }
-
-.card {
-  padding: 2em;
+.popup-btn:hover { background: var(--ink-100); }
+.popup-btn:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
 }
-
-.read-the-docs {
-  color: #888;
+.popup-last {
+  margin: 0;
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
 }

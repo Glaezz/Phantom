@@ -117,6 +117,28 @@ export const fixtureS6Official: Verdict = {
   },
 };
 
+// Hasil S3 setelah L4 selesai (disimulasikan dev harness setelah HoldIndicator).
+export const fixtureS3Resolved: Verdict = {
+  ...fixtureS3CautionL4Pending,
+  reasons: ['Pemeriksaan AI menemukan permintaan kode OTP di luar alur resmi.'],
+  trace: fixtureS3CautionL4Pending.trace.map((s) =>
+    s.stage === 'L4'
+      ? {
+          stage: 'L4' as const,
+          finding: 'soft' as const,
+          summaryKey: 'Pemeriksaan AI: formulir meminta kode OTP di luar alur resmi.',
+          technical: { tool: 'gemini', signal: 'otp-flow' },
+        }
+      : s,
+  ),
+  source: 'agent',
+};
+
+// L4 masih pending bila ada langkah L4 dengan finding 'none' (menunggu hasil).
+export function isL4Pending(verdict: Verdict): boolean {
+  return verdict.trace.some((s) => s.stage === 'L4' && s.finding === 'none');
+}
+
 export const fixtures = {
   S1: fixtureS1Danger,
   S2: fixtureS2Neutral,

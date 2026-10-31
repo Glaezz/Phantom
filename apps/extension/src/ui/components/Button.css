@@ -1,0 +1,62 @@
+.ph-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-height: var(--hit-min);
+  padding: var(--s-2) var(--s-4);
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  cursor: pointer;
+  transition: background-color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.ph-btn-tall { min-height: var(--s-12); }
+.ph-btn-minw { min-width: calc(var(--s-16) * 2 + var(--s-8)); }
+
+.ph-btn:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.ph-btn:active:not(:disabled) { transform: translateY(1px); }
+.ph-btn:disabled { opacity: 0.45; cursor: default; }
+
+.ph-btn-primary { background: var(--ink-900); color: var(--surface); }
+.ph-btn-primary:hover:not(:disabled) { background: var(--ink-800); }
+
+.ph-btn-status[data-status='official'] { background: var(--official-strong); color: var(--official-on); }
+.ph-btn-status[data-status='neutral']  { background: var(--neutral-strong);  color: var(--neutral-on); }
+.ph-btn-status[data-status='caution']  { background: var(--caution-strong);  color: var(--caution-on); }
+.ph-btn-status[data-status='danger']   { background: var(--danger-strong);   color: var(--danger-on); }
+.ph-btn-status:hover:not(:disabled)    { filter: brightness(0.96); }
+.ph-btn-status:active:not(:disabled)   { filter: brightness(0.92); }
+
+.ph-btn-secondary {
+  background: transparent;
+  border-color: var(--ink-300);
+  color: var(--text);
+}
+.ph-btn-secondary:hover:not(:disabled) { background: var(--ink-100); }
+
+.ph-btn-tertiary {
+  background: transparent;
+  border: none;
+  color: var(--link);
+  min-height: var(--hit-min);
+}
+.ph-btn-tertiary:hover:not(:disabled) { text-decoration: underline; }
+
+.ph-btn-spinner {
+  width: var(--s-4);
+  height: var(--s-4);
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: var(--r-pill);
+  animation: ph-btn-spin var(--t-base) linear infinite;
+}
+@keyframes ph-btn-spin {
+  to { transform: rotate(360deg); }
+}
