@@ -1224,6 +1224,26 @@
     "exactHosts": []
   },
   {
+    "id": "roblox",
+    "name": "Roblox",
+    "category": "gaming",
+    "officialDomains": [
+      "roblox.com"
+    ],
+    "officialPhones": [],
+    "keywords": [
+      "roblox"
+    ],
+    "ambiguousToken": false,
+    "sources": [
+      "https://www.roblox.com/info/terms"
+    ],
+    "verifiedAt": "2026-10-31",
+    "verifiedBy": "Phantom Team",
+    "demo": false,
+    "exactHosts": []
+  },
+  {
     "id": "bank_nusantara_demo",
     "name": "Bank Nusantara (Contoh)",
     "category": "banking",

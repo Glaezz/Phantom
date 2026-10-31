@@ -26,6 +26,8 @@ export const FieldFeatureSchema = z.object({
 export const FormFeatureSchema = z.object({
   action: z.string().max(2048).nullable(),
   method: z.enum(['get', 'post']),
+  // true bila kredensial di luar <form> (div/JS) digabung ke form semu ini.
+  detached: z.boolean().optional(),
   fields: z.array(FieldFeatureSchema).max(30),
 });
 
@@ -71,7 +73,7 @@ export const SignalHitSchema = z.object({
 });
 
 export const TraceStepSchema = z.object({
-  stage: z.enum(['L0', 'L1', 'L2', 'L3', 'SCORE']),
+  stage: z.enum(['L0', 'L1', 'L2', 'L3', 'L4', 'SCORE']),
   signal: SignalIdSchema.optional(),
   message: z.string(),
   data: z
