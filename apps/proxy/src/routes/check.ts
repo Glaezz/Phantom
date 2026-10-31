@@ -223,6 +223,7 @@ checkRoute.post('/', async (c) => {
       ...state.prepared,
       agent: null,
       tokens: { input: 0, output: 0 },
+      l3: [],
     };
     return {
       inputUrl: state.inputUrl,

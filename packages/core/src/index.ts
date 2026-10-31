@@ -37,6 +37,22 @@ export type { BrandClaim, ClaimTextInput } from './claims';
 export { normalizeUrlForCache, cacheKey } from './cache-key';
 export { mergeVerdict } from './verdict';
 export type { MergedVerdict } from './verdict';
+export {
+  AnalyzeRequestSchema,
+  AnalyzeResponseSchema,
+  FinalVerdictSchema,
+  L3EntrySchema,
+  deriveL3Steps,
+  deriveL4Steps,
+  mergeProxyResult,
+  needsDeepCheck,
+} from './proxy-contracts';
+export type {
+  AnalyzeL3Entry,
+  AnalyzeRequest,
+  AnalyzeResponse,
+  AgentSummaryForTrace,
+} from './proxy-contracts';
 export type { OfficialMatch } from './l0';
 
 export type {

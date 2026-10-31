@@ -99,6 +99,15 @@ export async function extractFeatures(html: string, pageUrl: string): Promise<Pa
           if (currentHeading !== null) currentHeading += text.text;
         },
       })
+      .on('body', {
+        // Form semu hanya berlaku dalam satu blok; login berikutnya (setelah <form>) tidak
+        // boleh menumpang tujuan form sebelumnya.
+        element(element) {
+          element.onEndTag(() => {
+            pseudoForm = null;
+          });
+        },
+      })
       .on('form', {
         element(element) {
           const action = element.getAttribute('action');
@@ -123,7 +132,7 @@ export async function extractFeatures(html: string, pageUrl: string): Promise<Pa
           const form = formStack.at(-1);
           let target = form ?? pseudoForm;
           if (!target) {
-            target = { action: null, method: 'get', fields: [] };
+            target = { action: null, method: 'post', detached: true, fields: [] };
             pseudoForm = target;
             if (forms.length < 10) forms.push(target);
           }

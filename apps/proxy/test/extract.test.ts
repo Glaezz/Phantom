@@ -34,7 +34,7 @@ describe('extractFeatures', () => {
       method: 'post',
     });
     expect(features.forms[0].fields.map((field) => field.type)).toEqual(['text', 'password']);
-    expect(features.forms[1]).toMatchObject({ action: null, method: 'get' });
+    expect(features.forms[1]).toMatchObject({ action: null, method: 'post', detached: true });
     expect(features.forms[1].fields[0].name).toBe('otp');
     expect(features.externalResources.map((resource) => resource.url)).toEqual(
       expect.arrayContaining(['https://cdn.other.com/logo.png', 'https://cdn.other.com/app.js']),
@@ -49,7 +49,7 @@ describe('extractFeatures', () => {
   it('puts an input outside a form into a pseudo form', async () => {
     const features = await extractFeatures('<input type="password" name="pass">', 'https://a.example/');
     expect(features.forms).toHaveLength(1);
-    expect(features.forms[0]).toMatchObject({ action: null, method: 'get' });
+    expect(features.forms[0]).toMatchObject({ action: null, method: 'post', detached: true });
     expect(features.forms[0].fields[0].type).toBe('password');
   });
 

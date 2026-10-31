@@ -1,8 +1,11 @@
 node_modules
 dist
+.wrangler
 .vite
 .env
 .env.local
 *.zip
 .output
 .wxt
+.agents
+AGENTS.md
