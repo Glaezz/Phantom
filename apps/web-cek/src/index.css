@@ -68,6 +68,18 @@ samp {
   padding-inline: var(--s-5);
 }
 
+/* Varian lebar untuk landing (WEB-01): 72rem, padding --s-4 -> --s-6 */
+.ph-container--wide {
+  max-width: 72rem;
+  padding-inline: var(--s-4);
+}
+
+@media (min-width: 640px) {
+  .ph-container--wide {
+    padding-inline: var(--s-6);
+  }
+}
+
 .ph-dot {
   display: inline-block;
   width: 0.3em;

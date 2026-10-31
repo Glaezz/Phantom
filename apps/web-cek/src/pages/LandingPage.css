@@ -1,0 +1,411 @@
+/* ================================================================
+   LANDING PAGE (WEB-01) - HANYA tampilan, semua teks dari copy.id.ts
+   Ritme: antar bagian --s-16 (desktop) / --s-12 (mobile),
+   di dalam bagian --s-8. Skala: display > h1 > h2 > body > caption.
+   ================================================================ */
+
+/* --- Seksi: ritme jarak antar bagian --- */
+.ph-section {
+  padding-block: var(--s-12);
+}
+
+@media (min-width: 640px) {
+  .ph-section {
+    padding-block: var(--s-16);
+  }
+}
+
+/* --- Hero --- */
+.ph-hero {
+  padding-block: var(--s-12);
+  position: relative;
+}
+
+@media (min-width: 640px) {
+  .ph-hero {
+    padding-block: var(--s-16);
+  }
+}
+
+.ph-hero__inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-8);
+}
+
+/* Mobile: teks lebih dulu (urutan sumber sudah teks -> visual) */
+.ph-hero__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-6);
+  min-width: 0;
+}
+
+.ph-hero__headline {
+  font-size: var(--fs-display);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  color: var(--text);
+  max-width: 18ch;
+  text-wrap: balance;
+}
+
+/* Kata terakhir + titik persegi merek tidak boleh terpisah (DS-53) */
+.ph-hero__last {
+  white-space: nowrap;
+}
+
+.ph-hero__dot {
+  width: 0.42em;
+  height: 0.42em;
+  vertical-align: baseline;
+  margin-inline-start: 0.12em;
+}
+
+.ph-hero__subtitle {
+  font-size: var(--fs-body);
+  color: var(--text-muted);
+  max-width: 60ch;
+}
+
+/* Aksi hero: jarak --s-4, tinggi tombol sama */
+.ph-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: var(--s-4);
+}
+
+.ph-hero__actions .ph-button {
+  flex: 0 1 auto;
+  /* Tinggi sama untuk kedua tombol hero */
+  min-height: 56px;
+}
+
+@media (min-width: 900px) {
+  .ph-hero__inner {
+    grid-template-columns: 1.05fr 0.95fr;
+    align-items: center;
+    gap: var(--s-8);
+  }
+}
+
+/* --- Bukti visual hero --- */
+.ph-hero__visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+/* Motif logo garis tunggal (DS-64) - sangat samar, di belakang kartu,
+   tidak menimpa teks apa pun. */
+.ph-hero__motif {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  color: var(--text);
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+.ph-hero__motif-svg {
+  width: min(100%, 22rem);
+  height: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+  .ph-hero__motif {
+    opacity: 0.1;
+  }
+}
+
+/* Contoh hasil statis (bukan ResultCard sungguhan) */
+.ph-hero__example {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  width: 100%;
+  max-width: 26rem;
+}
+
+.ph-hero__example-label {
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+  margin-block-end: var(--s-3);
+}
+
+.ph-hero__example-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-6);
+  background: var(--surface);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-2);
+}
+
+.ph-hero__example-title {
+  font-size: var(--fs-h2);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  color: var(--text);
+}
+
+.ph-hero__example-action {
+  font-size: var(--fs-body);
+  color: var(--text-muted);
+}
+
+/* Alamat contoh fiktif: teks mono, bukan tautan (NFR-07, DS-44) */
+.ph-hero__example-address {
+  display: block;
+  max-width: 100%;
+  padding: var(--s-2) var(--s-3);
+  background: var(--ink-100);
+  border: 1px solid var(--ink-200);
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-color-scheme: dark) {
+  .ph-hero__example-address {
+    background: var(--ink-200);
+  }
+}
+
+/* --- Judul & pengantar seksi --- */
+.ph-section-heading {
+  font-size: var(--fs-h1);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  color: var(--text);
+  max-width: 24ch;
+  text-wrap: balance;
+}
+
+.ph-section-intro {
+  font-size: var(--fs-body);
+  color: var(--text-muted);
+  margin-block-start: var(--s-3);
+  max-width: 60ch;
+}
+
+/* --- Cara Kerja --- */
+.ph-how {
+  background: var(--surface);
+}
+
+.ph-how__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  margin-block-start: var(--s-8);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-8);
+}
+
+.ph-how__step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    'num title'
+    'num text';
+  column-gap: var(--s-4);
+  row-gap: var(--s-2);
+  align-items: start;
+}
+
+/* Angka: lingkaran border --ink-300, teks --text (kontras >= 4,5:1) */
+.ph-how__step-num {
+  grid-area: num;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--s-10);
+  height: var(--s-10);
+  border: 1px solid var(--ink-300);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--fs-body);
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.ph-how__step-title {
+  grid-area: title;
+  font-size: var(--fs-h2);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  color: var(--text);
+}
+
+.ph-how__step-text {
+  grid-area: text;
+  font-size: var(--fs-body);
+  color: var(--text-muted);
+  max-width: 60ch;
+}
+
+@media (min-width: 768px) {
+  .ph-how__steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .ph-how__step {
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'num title'
+      'text text';
+    row-gap: var(--s-3);
+  }
+}
+
+/* --- Empat Status Phantom --- */
+.ph-statuses {
+  background: var(--paper);
+}
+
+.ph-statuses__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-4);
+  margin-block-start: var(--s-8);
+}
+
+.ph-statuses__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-5);
+  background: var(--surface);
+  border-radius: var(--r-md);
+  border: 1px solid var(--ink-200);
+}
+
+.ph-statuses__note {
+  font-size: var(--fs-body);
+  color: var(--text);
+}
+
+@media (min-width: 640px) {
+  .ph-statuses__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .ph-statuses__grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* --- Privasi --- */
+.ph-privacy {
+  background: var(--surface);
+}
+
+.ph-privacy__points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  margin-block-start: var(--s-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.ph-privacy__point {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  font-size: var(--fs-body);
+  color: var(--text);
+  max-width: 60ch;
+}
+
+.ph-privacy__point::before {
+  content: '';
+  display: inline-block;
+  width: var(--s-5);
+  height: var(--s-5);
+  flex-shrink: 0;
+  margin-block-start: 0.15em;
+  border-radius: var(--r-pill);
+  background: var(--ink-300);
+  /* ikon centang sederhana via background, bukan gambar */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%235C5C5C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8.5l3 3L13 5'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .ph-privacy__point::before {
+    background: var(--ink-200);
+  }
+}
+
+/* --- Footer (DS-09) --- */
+.ph-footer {
+  padding-block: var(--s-12);
+  background: var(--paper);
+  border-top: 1px solid var(--ink-200);
+}
+
+@media (min-width: 640px) {
+  .ph-footer {
+    padding-block: var(--s-16);
+  }
+}
+
+.ph-footer__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  align-items: center;
+  text-align: center;
+}
+
+.ph-footer__tagline {
+  font-size: var(--fs-body);
+  font-weight: 600;
+  color: var(--text);
+  max-width: 28rem;
+}
+
+.ph-footer__disclaimer {
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+}
+
+.ph-footer__copyright {
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+}
+
+.ph-footer__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-block-start: var(--s-6);
+  color: var(--text-muted);
+}
+
+.ph-footer__brand-name {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+}

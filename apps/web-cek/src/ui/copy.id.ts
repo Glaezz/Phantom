@@ -128,12 +128,17 @@ export const copy = {
       'Phantom memeriksa tautan dan pesan yang mencurigakan sebelum Anda menyerahkan kata sandi, PIN, atau kode OTP.',
     cta: 'Periksa Sekarang',
     secondaryCta: 'Pasang Ekstensi',
+    heroExampleLabel: 'Contoh hasil pemeriksaan',
+    heroExampleAddress: 'promo-hadiah-murah.example',
+    heroExampleBrand: 'Bank Contoh',
     howTitle: 'Cara kerja',
+    howStepTitles: ['Tempel', 'Periksa', 'Lihat peringatan'],
     howSteps: [
       'Tempel tautan atau seluruh pesan yang Anda terima.',
       'Phantom memeriksa alamat situs, isi laman, dan bila perlu meminta bantuan AI.',
       'Anda melihat peringatan sebelum mengisi kata sandi, PIN, atau kode OTP.',
     ],
+    statusPhantomTitle: 'Empat status Phantom',
     statusTitle: 'Arti empat status',
     statusIntro: 'Setiap hasil memakai warna, ikon, dan kata yang sama.',
     statusNotes: {
@@ -148,6 +153,11 @@ export const copy = {
     downloadTitle: 'Butuh pemeriksaan otomatis saat menjelajah?',
     downloadBody: 'Pasang ekstensi Phantom untuk peringatan sebelum data Anda terkirim.',
     downloadCta: 'Buka halaman Unduh',
+  },
+
+  /* Placeholder halaman yang belum diimplementasi (8.1, 8.2) */
+  placeholder: {
+    comingSoon: 'Segera hadir',
   },
 
   /* Unduh (WEB-07) */
