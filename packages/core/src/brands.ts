@@ -191,3 +191,41 @@ export function isHostOwnedByAnyBrand(index: BrandIndex, parsed: ParsedUrl): boo
   }
   return index.byExactHost.has(parsed.hostname);
 }
+
+/** Deterministic brand search used by the proxy agent's read-only tool. */
+export function findBrands(
+  query: string,
+  brands: Brand[],
+  limit = 10,
+): Brand[] {
+  const needle = query.toLowerCase().trim();
+  if (!needle) return [];
+
+  const scored: { brand: Brand; score: number; order: number }[] = [];
+
+  brands.forEach((brand, order) => {
+    const values = [
+      brand.id,
+      brand.name,
+      ...brand.keywords,
+      ...brand.officialDomains,
+      ...brand.exactHosts,
+    ].map((value) => value.toLowerCase());
+
+    let score: number | null = null;
+    for (const value of values) {
+      if (value === needle) {
+        score = 0;
+        break;
+      }
+      if (value.startsWith(needle)) score = score === null ? 1 : Math.min(score, 1);
+      else if (value.includes(needle)) score = score === null ? 2 : Math.min(score, 2);
+    }
+    if (score !== null) scored.push({ brand, score, order });
+  });
+
+  return scored
+    .sort((a, b) => a.score - b.score || a.order - b.order)
+    .slice(0, limit)
+    .map((entry) => entry.brand);
+}
