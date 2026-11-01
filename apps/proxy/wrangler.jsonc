@@ -15,7 +15,7 @@
     "CACHE_TTL_NEUTRAL_DAYS": "3",
     "RATE_LIMIT_ANALYZE_PER_MIN": "30",
     "RATE_LIMIT_CHECK_PER_MIN": "6",
-    "ALLOWED_ORIGINS": "",
+    "ALLOWED_ORIGINS": "https://phantom-web.vercel.app",
     "ALLOW_EXTENSION_ORIGINS": "true"
   },
   "kv_namespaces": [
