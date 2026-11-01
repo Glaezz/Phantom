@@ -3,702 +3,1339 @@
     "id": "bca",
     "name": "Bank Central Asia (BCA)",
     "category": "banking",
-    "officialDomains": ["bca.co.id", "klikbca.com", "mybca.bca.co.id"],
-    "officialPhones": ["1500888"],
-    "keywords": ["bca", "klikbca", "mybca"],
+    "officialDomains": [
+      "bca.co.id",
+      "klikbca.com"
+    ],
+    "officialPhones": [
+      "1500888"
+    ],
+    "keywords": [
+      "bca",
+      "klikbca",
+      "mybca"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.bca.co.id"],
+    "sources": [
+      "https://www.bca.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "mandiri",
     "name": "Bank Mandiri",
     "category": "banking",
-    "officialDomains": ["bankmandiri.co.id", "bankmandiri.com", "livinbymandiri.id"],
-    "officialPhones": ["14000"],
-    "keywords": ["mandiri", "livin", "livinbymandiri"],
+    "officialDomains": [
+      "bankmandiri.co.id",
+      "bankmandiri.com",
+      "livinbymandiri.id"
+    ],
+    "officialPhones": [
+      "14000"
+    ],
+    "keywords": [
+      "mandiri",
+      "livin",
+      "livinbymandiri"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.bankmandiri.co.id"],
+    "sources": [
+      "https://www.bankmandiri.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "bri",
     "name": "Bank Rakyat Indonesia (BRI)",
     "category": "banking",
-    "officialDomains": ["bri.co.id", "bri.id", "ir-bri.com"],
-    "officialPhones": ["1500017", "14017"],
-    "keywords": ["bri", "brimo"],
-    "ambiguousToken": false,
-    "sources": ["https://bri.co.id"],
+    "officialDomains": [
+      "bri.co.id",
+      "bri.id",
+      "ir-bri.com"
+    ],
+    "officialPhones": [
+      "1500017",
+      "14017"
+    ],
+    "keywords": [
+      "bri",
+      "brimo"
+    ],
+    "ambiguousToken": true,
+    "sources": [
+      "https://bri.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "bni",
     "name": "Bank Negara Indonesia (BNI)",
     "category": "banking",
-    "officialDomains": ["bni.co.id", "bni-life.co.id"],
-    "officialPhones": ["1500046"],
-    "keywords": ["bni", "wondr"],
-    "ambiguousToken": false,
-    "sources": ["https://www.bni.co.id"],
+    "officialDomains": [
+      "bni.co.id",
+      "bni-life.co.id"
+    ],
+    "officialPhones": [
+      "1500046"
+    ],
+    "keywords": [
+      "bni",
+      "wondr"
+    ],
+    "ambiguousToken": true,
+    "sources": [
+      "https://www.bni.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "cimb",
     "name": "CIMB Niaga",
     "category": "banking",
-    "officialDomains": ["cimbniaga.co.id", "octoclicks.co.id"],
-    "officialPhones": ["14041"],
-    "keywords": ["cimb", "octomobile", "octoclicks"],
+    "officialDomains": [
+      "cimbniaga.co.id",
+      "octoclicks.co.id"
+    ],
+    "officialPhones": [
+      "14041"
+    ],
+    "keywords": [
+      "cimb",
+      "octomobile",
+      "octoclicks"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.cimbniaga.co.id"],
+    "sources": [
+      "https://www.cimbniaga.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "bsi",
     "name": "Bank Syariah Indonesia (BSI)",
     "category": "banking",
-    "officialDomains": ["bankbsi.co.id"],
-    "officialPhones": ["14040"],
-    "keywords": ["bsi", "banksyariahindonesia", "byond"],
-    "ambiguousToken": false,
-    "sources": ["https://www.bankbsi.co.id"],
+    "officialDomains": [
+      "bankbsi.co.id"
+    ],
+    "officialPhones": [
+      "14040"
+    ],
+    "keywords": [
+      "bsi",
+      "banksyariahindonesia",
+      "byond"
+    ],
+    "ambiguousToken": true,
+    "sources": [
+      "https://www.bankbsi.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "bank_jago",
     "name": "Bank Jago",
     "category": "banking",
-    "officialDomains": ["jago.com"],
-    "officialPhones": ["1500746"],
-    "keywords": ["jago", "bankjago"],
+    "officialDomains": [
+      "jago.com"
+    ],
+    "officialPhones": [
+      "1500746"
+    ],
+    "keywords": [
+      "jago",
+      "bankjago"
+    ],
     "ambiguousToken": true,
-    "sources": ["https://jago.com"],
+    "sources": [
+      "https://jago.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "seabank",
     "name": "SeaBank Indonesia",
     "category": "banking",
-    "officialDomains": ["seabank.co.id"],
-    "officialPhones": ["1500130"],
-    "keywords": ["seabank"],
+    "officialDomains": [
+      "seabank.co.id"
+    ],
+    "officialPhones": [
+      "1500130"
+    ],
+    "keywords": [
+      "seabank"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.seabank.co.id"],
+    "sources": [
+      "https://www.seabank.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "btn",
     "name": "Bank Tabungan Negara (BTN)",
     "category": "banking",
-    "officialDomains": ["btn.co.id"],
-    "officialPhones": ["1500286"],
-    "keywords": ["btn", "btnmobile"],
-    "ambiguousToken": false,
-    "sources": ["https://www.btn.co.id"],
+    "officialDomains": [
+      "btn.co.id"
+    ],
+    "officialPhones": [
+      "1500286"
+    ],
+    "keywords": [
+      "btn",
+      "btnmobile"
+    ],
+    "ambiguousToken": true,
+    "sources": [
+      "https://www.btn.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "permata",
     "name": "PermataBank",
     "category": "banking",
-    "officialDomains": ["permatabank.com"],
-    "officialPhones": ["1500111"],
-    "keywords": ["permata", "permatabank", "permatanet"],
+    "officialDomains": [
+      "permatabank.com"
+    ],
+    "officialPhones": [
+      "1500111"
+    ],
+    "keywords": [
+      "permata",
+      "permatabank",
+      "permatanet"
+    ],
     "ambiguousToken": true,
-    "sources": ["https://www.permatabank.com"],
+    "sources": [
+      "https://www.permatabank.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "danamon",
     "name": "Bank Danamon",
     "category": "banking",
-    "officialDomains": ["danamon.co.id"],
-    "officialPhones": ["1500090"],
-    "keywords": ["danamon", "dbank"],
+    "officialDomains": [
+      "danamon.co.id"
+    ],
+    "officialPhones": [
+      "1500090"
+    ],
+    "keywords": [
+      "danamon",
+      "dbank"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.danamon.co.id"],
+    "sources": [
+      "https://www.danamon.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "ocbc",
     "name": "OCBC Indonesia",
     "category": "banking",
-    "officialDomains": ["ocbc.id", "ocpniaga.co.id"],
-    "officialPhones": ["1500999"],
-    "keywords": ["ocbc", "ocbcnisp", "onestore"],
+    "officialDomains": [
+      "ocbc.id",
+      "ocpniaga.co.id"
+    ],
+    "officialPhones": [
+      "1500999"
+    ],
+    "keywords": [
+      "ocbc",
+      "ocbcnisp",
+      "onestore"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.ocbc.id"],
+    "sources": [
+      "https://www.ocbc.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "panin",
     "name": "Bank Panin",
     "category": "banking",
-    "officialDomains": ["panin.co.id"],
-    "officialPhones": ["1500678"],
-    "keywords": ["panin", "paninmobile"],
+    "officialDomains": [
+      "panin.co.id"
+    ],
+    "officialPhones": [
+      "1500678"
+    ],
+    "keywords": [
+      "panin",
+      "paninmobile"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.panin.co.id"],
+    "sources": [
+      "https://www.panin.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "maybank",
     "name": "Maybank Indonesia",
     "category": "banking",
-    "officialDomains": ["maybank.co.id"],
-    "officialPhones": ["1500150"],
-    "keywords": ["maybank", "m2u"],
+    "officialDomains": [
+      "maybank.co.id"
+    ],
+    "officialPhones": [
+      "1500150"
+    ],
+    "keywords": [
+      "maybank",
+      "m2u"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.maybank.co.id"],
+    "sources": [
+      "https://www.maybank.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "bank_mega",
     "name": "Bank Mega",
     "category": "banking",
-    "officialDomains": ["bankmega.com"],
-    "officialPhones": ["08081500010"],
-    "keywords": ["bankmega", "megamobile"],
+    "officialDomains": [
+      "bankmega.com"
+    ],
+    "officialPhones": [
+      "08081500010"
+    ],
+    "keywords": [
+      "bankmega",
+      "megamobile"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.bankmega.com"],
+    "sources": [
+      "https://www.bankmega.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "blu_bca",
     "name": "blu by BCA Digital",
     "category": "banking",
-    "officialDomains": ["bcadigital.co.id"],
-    "officialPhones": ["1500688"],
-    "keywords": ["blubybcadigital", "bcadigital"],
+    "officialDomains": [
+      "bcadigital.co.id"
+    ],
+    "officialPhones": [
+      "1500688"
+    ],
+    "keywords": [
+      "blubybcadigital",
+      "bcadigital"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://bcadigital.co.id"],
+    "sources": [
+      "https://bcadigital.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "allo_bank",
     "name": "Allo Bank",
     "category": "banking",
-    "officialDomains": ["allobank.com"],
-    "officialPhones": ["08081404111"],
-    "keywords": ["allobank", "allo"],
+    "officialDomains": [
+      "allobank.com"
+    ],
+    "officialPhones": [
+      "08081404111"
+    ],
+    "keywords": [
+      "allobank",
+      "allo"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.allobank.com"],
+    "sources": [
+      "https://www.allobank.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "krom_bank",
     "name": "Krom Bank",
     "category": "banking",
-    "officialDomains": ["krom.id"],
-    "officialPhones": ["02150996999"],
-    "keywords": ["krom", "krombank"],
+    "officialDomains": [
+      "krom.id"
+    ],
+    "officialPhones": [
+      "02150996999"
+    ],
+    "keywords": [
+      "krom",
+      "krombank"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://krom.id"],
+    "sources": [
+      "https://krom.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "superbank",
     "name": "Superbank Indonesia",
     "category": "banking",
-    "officialDomains": ["superbank.id"],
-    "officialPhones": ["1500333"],
-    "keywords": ["superbank"],
+    "officialDomains": [
+      "superbank.id"
+    ],
+    "officialPhones": [
+      "1500333"
+    ],
+    "keywords": [
+      "superbank"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.superbank.id"],
+    "sources": [
+      "https://www.superbank.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "dana",
     "name": "DANA Indonesia",
     "category": "ewallet",
-    "officialDomains": ["dana.id"],
-    "officialPhones": ["1500445"],
-    "keywords": ["dana"],
+    "officialDomains": [
+      "dana.id"
+    ],
+    "officialPhones": [
+      "1500445"
+    ],
+    "keywords": [
+      "dana"
+    ],
     "ambiguousToken": true,
-    "sources": ["https://www.dana.id"],
+    "sources": [
+      "https://www.dana.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "gopay",
     "name": "GoPay",
     "category": "ewallet",
-    "officialDomains": ["gopay.co.id", "gojek.com"],
+    "officialDomains": [
+      "gopay.co.id",
+      "gojek.com"
+    ],
     "officialPhones": [],
-    "keywords": ["gopay", "gojek"],
+    "keywords": [
+      "gopay",
+      "gojek"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://gopay.co.id"],
+    "sources": [
+      "https://gopay.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "ovo",
     "name": "OVO",
     "category": "ewallet",
-    "officialDomains": ["ovo.id"],
-    "officialPhones": ["1500696"],
-    "keywords": ["ovo"],
-    "ambiguousToken": false,
-    "sources": ["https://www.ovo.id"],
+    "officialDomains": [
+      "ovo.id"
+    ],
+    "officialPhones": [
+      "1500696"
+    ],
+    "keywords": [
+      "ovo"
+    ],
+    "ambiguousToken": true,
+    "sources": [
+      "https://www.ovo.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "shopeepay",
     "name": "ShopeePay",
     "category": "ewallet",
-    "officialDomains": ["shopeepay.co.id", "shopee.co.id"],
-    "officialPhones": ["1500702"],
-    "keywords": ["shopeepay"],
+    "officialDomains": [
+      "shopeepay.co.id",
+      "shopee.co.id"
+    ],
+    "officialPhones": [
+      "1500702"
+    ],
+    "keywords": [
+      "shopeepay"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://shopeepay.co.id"],
+    "sources": [
+      "https://shopeepay.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "linkaja",
     "name": "LinkAja",
     "category": "ewallet",
-    "officialDomains": ["linkaja.id"],
-    "officialPhones": ["150911"],
-    "keywords": ["linkaja"],
+    "officialDomains": [
+      "linkaja.id"
+    ],
+    "officialPhones": [
+      "150911"
+    ],
+    "keywords": [
+      "linkaja"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.linkaja.id"],
+    "sources": [
+      "https://www.linkaja.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "kredivo",
     "name": "Kredivo Indonesia",
     "category": "paylater_crypto",
-    "officialDomains": ["kredivo.id", "kredivo.com"],
-    "officialPhones": ["08071573348"],
-    "keywords": ["kredivo"],
+    "officialDomains": [
+      "kredivo.id",
+      "kredivo.com"
+    ],
+    "officialPhones": [
+      "08071573348"
+    ],
+    "keywords": [
+      "kredivo"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.kredivo.id"],
+    "sources": [
+      "https://www.kredivo.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "akulaku",
     "name": "Akulaku",
     "category": "paylater_crypto",
-    "officialDomains": ["akulaku.com", "akulakupaylater.com"],
-    "officialPhones": ["1500920"],
-    "keywords": ["akulaku"],
+    "officialDomains": [
+      "akulaku.com",
+      "akulakupaylater.com"
+    ],
+    "officialPhones": [
+      "1500920"
+    ],
+    "keywords": [
+      "akulaku"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.akulaku.com"],
+    "sources": [
+      "https://www.akulaku.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "atome",
     "name": "Atome Indonesia",
     "category": "paylater_crypto",
-    "officialDomains": ["atome.id"],
-    "officialPhones": ["02121502517"],
-    "keywords": ["atome"],
+    "officialDomains": [
+      "atome.id"
+    ],
+    "officialPhones": [
+      "02121502517"
+    ],
+    "keywords": [
+      "atome"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.atome.id"],
+    "sources": [
+      "https://www.atome.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "indodax",
     "name": "INDODAX",
     "category": "paylater_crypto",
-    "officialDomains": ["indodax.com"],
-    "officialPhones": ["02150959800"],
-    "keywords": ["indodax"],
+    "officialDomains": [
+      "indodax.com"
+    ],
+    "officialPhones": [
+      "02150959800"
+    ],
+    "keywords": [
+      "indodax"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://indodax.com"],
+    "sources": [
+      "https://indodax.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "pintu",
     "name": "Pintu (PT Pintu Kemana Saja)",
     "category": "paylater_crypto",
-    "officialDomains": ["pintu.co.id"],
+    "officialDomains": [
+      "pintu.co.id"
+    ],
     "officialPhones": [],
-    "keywords": ["pintu"],
+    "keywords": [
+      "pintu"
+    ],
     "ambiguousToken": true,
-    "sources": ["https://pintu.co.id"],
+    "sources": [
+      "https://pintu.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "tokocrypto",
     "name": "Tokocrypto",
     "category": "paylater_crypto",
-    "officialDomains": ["tokocrypto.com"],
+    "officialDomains": [
+      "tokocrypto.com"
+    ],
     "officialPhones": [],
-    "keywords": ["tokocrypto"],
+    "keywords": [
+      "tokocrypto"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.tokocrypto.com"],
+    "sources": [
+      "https://www.tokocrypto.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "shopee",
     "name": "Shopee Indonesia",
     "category": "ecommerce",
-    "officialDomains": ["shopee.co.id", "shopee.com"],
+    "officialDomains": [
+      "shopee.co.id",
+      "shopee.com"
+    ],
     "officialPhones": [],
-    "keywords": ["shopee"],
+    "keywords": [
+      "shopee"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://shopee.co.id"],
+    "sources": [
+      "https://shopee.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "tokopedia",
     "name": "Tokopedia",
     "category": "ecommerce",
-    "officialDomains": ["tokopedia.com"],
+    "officialDomains": [
+      "tokopedia.com"
+    ],
     "officialPhones": [],
-    "keywords": ["tokopedia", "tokped"],
+    "keywords": [
+      "tokopedia",
+      "tokped"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.tokopedia.com"],
+    "sources": [
+      "https://www.tokopedia.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "bukalapak",
     "name": "Bukalapak",
     "category": "ecommerce",
-    "officialDomains": ["bukalapak.com"],
+    "officialDomains": [
+      "bukalapak.com"
+    ],
     "officialPhones": [],
-    "keywords": ["bukalapak"],
+    "keywords": [
+      "bukalapak"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.bukalapak.com"],
+    "sources": [
+      "https://www.bukalapak.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "blibli",
     "name": "Blibli",
     "category": "ecommerce",
-    "officialDomains": ["blibli.com"],
-    "officialPhones": ["08041871871"],
-    "keywords": ["blibli"],
+    "officialDomains": [
+      "blibli.com"
+    ],
+    "officialPhones": [
+      "08041871871"
+    ],
+    "keywords": [
+      "blibli"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.blibli.com"],
+    "sources": [
+      "https://www.blibli.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "lazada",
     "name": "Lazada Indonesia",
     "category": "ecommerce",
-    "officialDomains": ["lazada.co.id"],
+    "officialDomains": [
+      "lazada.co.id"
+    ],
     "officialPhones": [],
-    "keywords": ["lazada"],
+    "keywords": [
+      "lazada"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.lazada.co.id"],
+    "sources": [
+      "https://www.lazada.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "tiktok_shop",
     "name": "TikTok Shop / Tokopedia TikTok",
     "category": "ecommerce",
-    "officialDomains": ["tiktok.com", "shop.tiktok.com"],
+    "officialDomains": [],
     "officialPhones": [],
-    "keywords": ["tiktokshop", "tiktok"],
+    "keywords": [
+      "tiktokshop",
+      "tiktok"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://shop.tiktok.com"],
+    "sources": [
+      "https://shop.tiktok.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": [
+      "shop.tiktok.com"
+    ]
   },
   {
     "id": "zalora",
     "name": "Zalora Indonesia",
     "category": "ecommerce",
-    "officialDomains": ["zalora.co.id"],
-    "officialPhones": ["02129490100"],
-    "keywords": ["zalora"],
+    "officialDomains": [
+      "zalora.co.id"
+    ],
+    "officialPhones": [
+      "02129490100"
+    ],
+    "keywords": [
+      "zalora"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.zalora.co.id"],
+    "sources": [
+      "https://www.zalora.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "jnt",
     "name": "J&T Express",
     "category": "courier",
-    "officialDomains": ["jet.co.id", "jtexpress.id"],
-    "officialPhones": ["02180661888"],
-    "keywords": ["jnt", "j&t", "jtexpress"],
-    "ambiguousToken": false,
-    "sources": ["https://jet.co.id"],
+    "officialDomains": [
+      "jet.co.id",
+      "jtexpress.id"
+    ],
+    "officialPhones": [
+      "02180661888"
+    ],
+    "keywords": [
+      "jnt",
+      "j&t",
+      "jtexpress"
+    ],
+    "ambiguousToken": true,
+    "sources": [
+      "https://jet.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "jne",
     "name": "JNE Express",
     "category": "courier",
-    "officialDomains": ["jne.co.id"],
-    "officialPhones": ["02129278888"],
-    "keywords": ["jne"],
-    "ambiguousToken": false,
-    "sources": ["https://www.jne.co.id"],
+    "officialDomains": [
+      "jne.co.id"
+    ],
+    "officialPhones": [
+      "02129278888"
+    ],
+    "keywords": [
+      "jne"
+    ],
+    "ambiguousToken": true,
+    "sources": [
+      "https://www.jne.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "sicepat",
     "name": "SiCepat Ekspres",
     "category": "courier",
-    "officialDomains": ["sicepat.com"],
-    "officialPhones": ["02150200050"],
-    "keywords": ["sicepat"],
+    "officialDomains": [
+      "sicepat.com"
+    ],
+    "officialPhones": [
+      "02150200050"
+    ],
+    "keywords": [
+      "sicepat"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.sicepat.com"],
+    "sources": [
+      "https://www.sicepat.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "pos_indonesia",
     "name": "Pos Indonesia",
     "category": "courier",
-    "officialDomains": ["posindonesia.co.id"],
-    "officialPhones": ["1500161"],
-    "keywords": ["posindonesia", "pospay"],
+    "officialDomains": [
+      "posindonesia.co.id"
+    ],
+    "officialPhones": [
+      "1500161"
+    ],
+    "keywords": [
+      "posindonesia",
+      "pospay"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.posindonesia.co.id"],
+    "sources": [
+      "https://www.posindonesia.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "anteraja",
     "name": "Anteraja",
     "category": "courier",
-    "officialDomains": ["anteraja.id"],
-    "officialPhones": ["02150603333"],
-    "keywords": ["anteraja"],
+    "officialDomains": [
+      "anteraja.id"
+    ],
+    "officialPhones": [
+      "02150603333"
+    ],
+    "keywords": [
+      "anteraja"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://anteraja.id"],
+    "sources": [
+      "https://anteraja.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "ninja_xpress",
     "name": "Ninja Xpress",
     "category": "courier",
-    "officialDomains": ["ninjaxpress.co"],
-    "officialPhones": ["02129264120"],
-    "keywords": ["ninjaxpress", "ninja"],
+    "officialDomains": [
+      "ninjaxpress.co"
+    ],
+    "officialPhones": [
+      "02129264120"
+    ],
+    "keywords": [
+      "ninjaxpress",
+      "ninja"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.ninjaxpress.co"],
+    "sources": [
+      "https://www.ninjaxpress.co"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "telkomsel",
     "name": "Telkomsel / MyTelkomsel",
     "category": "telecom",
-    "officialDomains": ["telkomsel.com"],
-    "officialPhones": ["188"],
-    "keywords": ["telkomsel", "mytelkomsel"],
+    "officialDomains": [
+      "telkomsel.com"
+    ],
+    "officialPhones": [
+      "188"
+    ],
+    "keywords": [
+      "telkomsel",
+      "mytelkomsel"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.telkomsel.com"],
+    "sources": [
+      "https://www.telkomsel.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "indosat",
     "name": "Indosat Ooredoo Hutchison / myIM3",
     "category": "telecom",
-    "officialDomains": ["ioh.co.id", "indosatooredoo.com"],
-    "officialPhones": ["185"],
-    "keywords": ["indosat", "im3", "myim3"],
+    "officialDomains": [
+      "ioh.co.id",
+      "indosatooredoo.com"
+    ],
+    "officialPhones": [
+      "185"
+    ],
+    "keywords": [
+      "indosat",
+      "im3",
+      "myim3"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://ioh.co.id"],
+    "sources": [
+      "https://ioh.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "xl_axiata",
     "name": "XL Axiata / myXL",
     "category": "telecom",
-    "officialDomains": ["xl.co.id", "xlaxiata.co.id"],
-    "officialPhones": ["817"],
-    "keywords": ["xl", "myxl", "xlaxiata"],
-    "ambiguousToken": false,
-    "sources": ["https://www.xl.co.id"],
+    "officialDomains": [
+      "xl.co.id",
+      "xlaxiata.co.id"
+    ],
+    "officialPhones": [
+      "817"
+    ],
+    "keywords": [
+      "xl",
+      "myxl",
+      "xlaxiata"
+    ],
+    "ambiguousToken": true,
+    "sources": [
+      "https://www.xl.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "bpjs_kesehatan",
     "name": "BPJS Kesehatan",
     "category": "government",
-    "officialDomains": ["bpjs-kesehatan.go.id"],
-    "officialPhones": ["165"],
-    "keywords": ["bpjs", "bpjskesehatan", "jkn"],
+    "officialDomains": [
+      "bpjs-kesehatan.go.id"
+    ],
+    "officialPhones": [
+      "165"
+    ],
+    "keywords": [
+      "bpjs",
+      "bpjskesehatan",
+      "jkn"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://bpjs-kesehatan.go.id"],
+    "sources": [
+      "https://bpjs-kesehatan.go.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "bpjs_ketenagakerjaan",
     "name": "BPJS Ketenagakerjaan",
     "category": "government",
-    "officialDomains": ["bpjsketenagakerjaan.go.id"],
-    "officialPhones": ["175"],
-    "keywords": ["bpjstk", "bpjsketenagakerjaan", "jmo"],
+    "officialDomains": [
+      "bpjsketenagakerjaan.go.id"
+    ],
+    "officialPhones": [
+      "175"
+    ],
+    "keywords": [
+      "bpjstk",
+      "bpjsketenagakerjaan",
+      "jmo"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.bpjsketenagakerjaan.go.id"],
+    "sources": [
+      "https://www.bpjsketenagakerjaan.go.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "djp_pajak",
     "name": "DJP Online (Pajak)",
     "category": "government",
-    "officialDomains": ["pajak.go.id", "djponline.pajak.go.id"],
-    "officialPhones": ["1500200"],
-    "keywords": ["pajak", "djp", "djponline", "efiling"],
+    "officialDomains": [
+      "pajak.go.id"
+    ],
+    "officialPhones": [
+      "1500200"
+    ],
+    "keywords": [
+      "pajak",
+      "djp",
+      "djponline",
+      "efiling"
+    ],
     "ambiguousToken": true,
-    "sources": ["https://pajak.go.id"],
+    "sources": [
+      "https://pajak.go.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "pln",
     "name": "PLN Mobile / PT PLN (Persero)",
     "category": "government",
-    "officialDomains": ["pln.co.id"],
-    "officialPhones": ["123"],
-    "keywords": ["pln", "plnmobile"],
-    "ambiguousToken": false,
-    "sources": ["https://web.pln.co.id"],
+    "officialDomains": [
+      "pln.co.id"
+    ],
+    "officialPhones": [
+      "123"
+    ],
+    "keywords": [
+      "pln",
+      "plnmobile"
+    ],
+    "ambiguousToken": true,
+    "sources": [
+      "https://web.pln.co.id"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "google_oauth",
-    "name": "Google OAuth",
+    "name": "Google",
     "category": "oauth_payment",
-    "officialDomains": ["accounts.google.com", "google.com"],
+    "officialDomains": [
+      "google.com",
+      "google.co.id"
+    ],
     "officialPhones": [],
-    "keywords": ["google"],
+    "keywords": [
+      "google"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://accounts.google.com"],
+    "sources": [
+      "https://accounts.google.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": [
+      "accounts.google.com"
+    ],
+    "sharedContentPaths": [
+      "/forms/",
+      "/site/",
+      "/view/"
+    ]
   },
   {
     "id": "midtrans",
     "name": "Midtrans Payment Gateway",
     "category": "oauth_payment",
-    "officialDomains": ["midtrans.com", "app.midtrans.com"],
+    "officialDomains": [
+      "midtrans.com"
+    ],
     "officialPhones": [],
-    "keywords": ["midtrans"],
+    "keywords": [
+      "midtrans"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://midtrans.com"],
+    "sources": [
+      "https://midtrans.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "xendit",
     "name": "Xendit Payment Gateway",
     "category": "oauth_payment",
-    "officialDomains": ["xendit.co", "checkout.xendit.co"],
+    "officialDomains": [
+      "xendit.co"
+    ],
     "officialPhones": [],
-    "keywords": ["xendit"],
+    "keywords": [
+      "xendit"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://www.xendit.co"],
+    "sources": [
+      "https://www.xendit.co"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
-    "demo": false
+    "demo": false,
+    "exactHosts": []
   },
   {
     "id": "doku",
     "name": "DOKU Payment Gateway",
     "category": "oauth_payment",
-    "officialDomains": ["doku.com"],
+    "officialDomains": [
+      "doku.com"
+    ],
     "officialPhones": [],
-    "keywords": ["doku"],
+    "keywords": [
+      "doku"
+    ],
     "ambiguousToken": false,
-    "sources": ["https://doku.com"],
+    "sources": [
+      "https://doku.com"
+    ],
     "verifiedAt": "2026-10-30",
     "verifiedBy": "Phantom Team",
+    "demo": false,
+    "exactHosts": []
+  },
+  {
+    "id": "meta",
+    "name": "Meta",
+    "category": "social",
+    "officialDomains": ["meta.com"],
+    "exactHosts": [],
+    "officialPhones": [],
+    "keywords": ["meta platforms"],
+    "ambiguousToken": true,
+    "sources": ["https://www.meta.com"],
+    "verifiedAt": "2026-11-01",
+    "verifiedBy": "Phantom Team",
     "demo": false
+  },
+  {
+    "id": "facebook",
+    "name": "Facebook",
+    "category": "social",
+    "officialDomains": [],
+    "exactHosts": ["www.facebook.com", "facebook.com"],
+    "officialPhones": [],
+    "keywords": ["facebook"],
+    "ambiguousToken": false,
+    "sources": ["https://www.facebook.com"],
+    "verifiedAt": "2026-11-01",
+    "verifiedBy": "Phantom Team",
+    "demo": false
+  },
+  {
+    "id": "instagram",
+    "name": "Instagram",
+    "category": "social",
+    "officialDomains": ["instagram.com"],
+    "exactHosts": [],
+    "officialPhones": [],
+    "keywords": ["instagram"],
+    "ambiguousToken": false,
+    "sources": ["https://www.instagram.com"],
+    "verifiedAt": "2026-11-01",
+    "verifiedBy": "Phantom Team",
+    "demo": false
+  },
+  {
+    "id": "whatsapp",
+    "name": "WhatsApp",
+    "category": "social",
+    "officialDomains": ["whatsapp.com"],
+    "exactHosts": [],
+    "officialPhones": [],
+    "keywords": ["whatsapp"],
+    "ambiguousToken": false,
+    "sources": ["https://www.whatsapp.com"],
+    "verifiedAt": "2026-11-01",
+    "verifiedBy": "Phantom Team",
+    "demo": false
+  },
+  {
+    "id": "telegram",
+    "name": "Telegram",
+    "category": "social",
+    "officialDomains": ["telegram.org"],
+    "exactHosts": [],
+    "officialPhones": [],
+    "keywords": ["telegram"],
+    "ambiguousToken": false,
+    "sources": ["https://telegram.org"],
+    "verifiedAt": "2026-11-01",
+    "verifiedBy": "Phantom Team",
+    "demo": false
+  },
+  {
+    "id": "twitter",
+    "name": "Twitter",
+    "category": "social",
+    "officialDomains": ["twitter.com"],
+    "exactHosts": [],
+    "officialPhones": [],
+    "keywords": ["twitter"],
+    "ambiguousToken": false,
+    "sources": ["https://twitter.com"],
+    "verifiedAt": "2026-11-01",
+    "verifiedBy": "Phantom Team",
+    "demo": false
+  },
+  {
+    "id": "bank_nusantara_demo",
+    "name": "Bank Nusantara (Contoh)",
+    "category": "banking",
+    "officialDomains": [
+      "bank-nusantara-contoh.id"
+    ],
+    "exactHosts": [],
+    "officialPhones": [
+      "1500000"
+    ],
+    "keywords": [
+      "bank nusantara",
+      "nusantara"
+    ],
+    "ambiguousToken": false,
+    "sources": [
+      "https://bank-nusantara-contoh.id"
+    ],
+    "verifiedAt": "2026-10-31",
+    "verifiedBy": "Phantom Team",
+    "demo": true
   }
 ]

@@ -1,0 +1,59 @@
+:host, :root {
+  /* netral — ink-900/ink-800 = nilai logo */
+  --ink-900:#202020; --ink-800:#383838; --ink-600:#5C5C5C; --ink-400:#8A8A86;
+  --ink-300:#D6D6D2; --ink-200:#E7E7E3; --ink-100:#F1F1EE;
+  --paper:#FAFAF8; --surface:#FFFFFF; --text:#202020; --text-muted:#5C5C5C;
+
+  /* status (satu-satunya warna kromatik) */
+  --official-fg:#0B6B3A; --official-bg:#EAF6EF; --official-border:#BFE3CE; --official-strong:#11793F; --official-on:#FFFFFF;
+  --neutral-fg:#3F4A5A;  --neutral-bg:#EEF1F5;  --neutral-border:#D5DBE3;  --neutral-strong:#4B5668;  --neutral-on:#FFFFFF;
+  --caution-fg:#8A4B00;  --caution-bg:#FFF6E0;  --caution-border:#F3D68A;  --caution-strong:#F5B301;  --caution-on:#202020;
+  --danger-fg:#7A1610;   --danger-bg:#FEF3F2;   --danger-border:#F9C9C4;   --danger-strong:#C0261B;   --danger-on:#FFFFFF;
+
+  /* fungsional */
+  --focus:#2F6FED; --link:#1F4FBF; --scrim:rgba(32,32,32,.45);
+
+  /* bentuk */
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:24px; --r-pill:999px; --r-dot:2px;
+  --shadow-1:0 1px 2px rgba(32,32,32,.08);
+  --shadow-2:0 8px 24px rgba(32,32,32,.16);
+  --shadow-3:0 16px 48px rgba(32,32,32,.24);
+
+  /* jarak (basis 4) */
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:20px; --s-6:24px; --s-8:32px; --s-10:40px; --s-12:48px; --s-16:64px;
+
+  /* tipografi */
+  --font-ui:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --fs-caption:14px; --fs-body:16px; --fs-h2:17px; --fs-h1:20px;      /* overlay & popup */
+  --lh-body:1.55; --lh-tight:1.25;
+
+  /* gerak */
+  --ease:cubic-bezier(.2,.8,.2,1); --t-fast:150ms; --t-base:220ms;
+
+  /* ukuran sentuh */
+  --hit-min:44px;
+  --hit-lg:56px;
+  --bar-accent:6px;
+}
+
+/* Web Cek dan Unduh menimpa skala saja (DS-23) */
+[data-surface="web"] {
+  --fs-caption:15px; --fs-body:18px; --fs-h2:20px; --fs-h1:26px; --fs-display:32px; --hit-min:48px;
+}
+@media (min-width:640px){ [data-surface="web"]{ --fs-h1:32px; --fs-display:44px; } }
+
+@media (prefers-color-scheme: dark) {
+  :host, :root {
+    --paper:#151515; --surface:#1C1C1C; --text:#F2F2EF; --text-muted:#A3A3A0;
+    --ink-300:#3A3A38; --ink-200:#2A2A28; --ink-100:#232321;
+    --official-fg:#6FD39A; --official-bg:#0F2418; --official-border:#1F4A31; --official-strong:#6FD39A; --official-on:#0F2418;
+    --neutral-fg:#AEB8C6;  --neutral-bg:#1A1F27;  --neutral-border:#2C3440;  --neutral-strong:#AEB8C6;  --neutral-on:#151515;
+    --caution-fg:#FFC857;  --caution-bg:#2A2008;  --caution-border:#5A4410;  --caution-strong:#FFC857;  --caution-on:#202020;
+    --danger-fg:#FF8A80;   --danger-bg:#2A1412;   --danger-border:#5C2A26;   --danger-strong:#FF8A80;   --danger-on:#2A1412;
+    --focus:#7AA2FF; --link:#9DB8FF; --scrim:rgba(0,0,0,.6);
+    --shadow-2:0 8px 24px rgba(0,0,0,.5); --shadow-3:0 16px 48px rgba(0,0,0,.6);
+  }
+}
+@media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+@media (forced-colors: active){ .ph-surface{ border:1px solid CanvasText; } }

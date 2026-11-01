@@ -1,0 +1,198 @@
+.ph-parser-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  width: 100%;
+  font-family: var(--font-ui);
+  text-align: left;
+}
+
+.ph-parser-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ph-parser-list__heading {
+  margin: 0;
+  font-size: var(--fs-h2);
+  font-weight: 600;
+  color: var(--text);
+  line-height: var(--lh-tight);
+}
+
+.ph-parser__preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-4);
+  background-color: var(--ink-100);
+  border: 1px solid var(--ink-300);
+  border-radius: var(--r-md);
+}
+
+.ph-parser__preview-header {
+  display: flex;
+  align-items: center;
+}
+
+.ph-parser__preview-title {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.ph-parser__preview-text {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ph-parser__highlight {
+  background-color: transparent;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  padding-bottom: var(--s-1);
+}
+
+.ph-parser__highlight[data-status='danger'] {
+  color: var(--danger-fg);
+  border-bottom: 2px solid var(--danger-strong);
+}
+
+.ph-parser__highlight[data-status='caution'] {
+  color: var(--caution-fg);
+  border-bottom: 2px solid var(--caution-strong);
+}
+
+.ph-parser__highlight[data-status='neutral'] {
+  color: var(--neutral-fg);
+  border-bottom: 2px solid var(--neutral-strong);
+}
+
+.ph-parser__highlight[data-status='official'] {
+  color: var(--official-fg);
+  border-bottom: 2px solid var(--official-strong);
+}
+
+.ph-parser-list__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ph-parser-list__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-4);
+  background-color: var(--surface);
+  border: 1px solid var(--ink-300);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-1);
+}
+
+.ph-parser-list__row-main {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+}
+
+/* Tautan lain di pesan yang tidak diperiksa penuh: tampil redup, bukan aman. */
+.ph-parser-list__row[data-checked='false'] {
+  background-color: var(--ink-100);
+  border-style: dashed;
+  box-shadow: none;
+}
+
+.ph-parser-list__row[data-checked='false'] .ph-parser-list__finding {
+  color: var(--text-muted);
+}
+
+.ph-parser-list__row[data-checked='false'] .ph-parser-list__value {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.ph-parser-list__value {
+  padding: var(--s-1) var(--s-2);
+  background-color: var(--ink-100);
+  border: 1px solid var(--ink-300);
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-size: var(--fs-body);
+  color: var(--text);
+  word-break: break-all;
+}
+
+.ph-parser-list__value[data-status='danger'] {
+  text-decoration: underline dotted var(--danger-fg);
+  color: var(--danger-fg);
+}
+
+.ph-parser-list__value[data-status='caution'] {
+  color: var(--caution-fg);
+}
+
+.ph-parser-list__value[data-status='official'] {
+  color: var(--official-fg);
+}
+
+.ph-parser-list__finding {
+  font-size: var(--fs-body);
+  color: var(--text);
+  line-height: var(--lh-body);
+}
+
+.ph-parser-list__apk-warning {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-3);
+  background-color: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--r-sm);
+  color: var(--danger-fg);
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  line-height: var(--lh-body);
+}
+
+.ph-parser-list__apk-icon {
+  flex-shrink: 0;
+  color: var(--danger-strong);
+}
+
+.ph-parser-list__footer {
+  display: flex;
+  justify-content: center;
+}
+
+.ph-parser-list__toggle-btn {
+  background: none;
+  border: none;
+  padding: var(--s-2) var(--s-4);
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  color: var(--link);
+  cursor: pointer;
+  text-decoration: underline;
+  transition: opacity var(--t-fast) var(--ease);
+}
+
+.ph-parser-list__toggle-btn:hover {
+  opacity: 0.8;
+}
+
+.ph-parser-list__toggle-btn:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}

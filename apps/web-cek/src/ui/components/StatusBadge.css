@@ -1,0 +1,24 @@
+.ph-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: var(--badge-size);
+  padding: 0 var(--s-3);
+  border: 1px solid var(--badge-border);
+  border-radius: var(--r-pill);
+  background: var(--badge-bg);
+  color: var(--badge-fg);
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  white-space: nowrap;
+}
+
+.ph-status-badge--sm {
+  --badge-size: 28px;
+}
+
+.ph-status-badge--md {
+  --badge-size: 36px;
+}

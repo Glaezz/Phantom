@@ -1,0 +1,54 @@
+/* Footer bersama (Landing, Cek, Unduh) — konsisten, terpusat, dan menempel di bawah */
+.ph-footer,
+.ph-page-footer {
+  margin-block-start: auto;
+  padding-block: var(--s-12);
+  background: var(--paper);
+  border-top: 1px solid var(--ink-200);
+}
+
+@media (min-width: 640px) {
+  .ph-footer,
+  .ph-page-footer {
+    padding-block: var(--s-16);
+  }
+}
+
+.ph-footer__inner,
+.ph-page-footer__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  align-items: center;
+  text-align: center;
+}
+
+.ph-footer__tagline,
+.ph-page-footer__tagline {
+  font-size: var(--fs-body);
+  font-weight: 600;
+  color: var(--text);
+  max-width: 28rem;
+}
+
+.ph-footer__disclaimer,
+.ph-footer__copyright,
+.ph-page-footer__note {
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+}
+
+.ph-footer__brand,
+.ph-page-footer__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-block-start: var(--s-6);
+  color: var(--text-muted);
+}
+
+.ph-footer__brand-name,
+.ph-page-footer__brand-name {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+}

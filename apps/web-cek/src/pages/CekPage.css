@@ -1,0 +1,116 @@
+/* Halaman Cek (WEB-01, WEB-02): status pemeriksaan, catatan, hasil. */
+
+/* --- Status pemeriksaan (saat loading) --- */
+.ph-check-status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: var(--s-5);
+  background: var(--surface);
+  border: 1px solid var(--ink-200);
+  border-radius: var(--r-lg);
+}
+
+.ph-check-status__title {
+  font-size: var(--fs-h2);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.ph-check-status__steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ph-check-status__step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text);
+}
+
+/* Penanda jejak: titik persegi merek (DS-33). */
+.ph-check-status__dot {
+  flex-shrink: 0;
+  width: var(--s-2);
+  height: var(--s-2);
+  margin-block-start: 0.55em;
+  border-radius: var(--r-dot);
+  background: var(--ink-400);
+}
+
+.ph-check-status__slow {
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+}
+
+/* --- Catatan kesalahan masukan (bukan status vonis) --- */
+.ph-check-notice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-5);
+  background: var(--ink-100);
+  border: 1px solid var(--ink-300);
+  border-radius: var(--r-lg);
+}
+
+.ph-check-notice__head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.ph-check-notice__icon {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.ph-check-notice__title {
+  font-size: var(--fs-h2);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.ph-check-notice__body {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text);
+}
+
+/* --- Hasil pemeriksaan --- */
+.ph-check-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  min-width: 0;
+  width: 100%;
+}
+
+.ph-check-result__title {
+  align-self: flex-start;
+  font-size: var(--fs-h2);
+  font-weight: 600;
+  color: var(--text);
+  border-radius: var(--r-sm);
+}
+
+/* Fokus programatis tetap terlihat (DS-81). */
+.ph-check-result__title:focus {
+  outline: 3px solid var(--focus);
+  outline-offset: var(--s-1);
+}
+
+.ph-check-result__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  min-width: 0;
+  width: 100%;
+}
