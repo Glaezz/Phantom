@@ -1,0 +1,67 @@
+/* Kerangka halaman dalam (Cek, Unduh).
+   Header dan footer memakai ph-container--wide seperti landing; isi halaman
+   dibatasi kolom tengah agar baris tetap pendek (DS-51). */
+.ph-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-block-start: var(--s-8);
+}
+
+@media (min-width: 768px) {
+  .ph-page {
+    padding-block-start: var(--s-12);
+  }
+}
+
+.ph-page__column {
+  width: 100%;
+  max-width: 45rem;
+  margin-inline: auto;
+  margin-block-end: var(--s-16);
+  min-width: 0;
+}
+
+.ph-page__column--download {
+  max-width: 45rem;
+}
+
+.ph-page__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+/* Judul halaman > subjudul > isi (DS-43, bagian 4). */
+.ph-page__title {
+  font-size: var(--fs-display);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.02em;
+  color: var(--text);
+  max-width: 22ch;
+  text-wrap: balance;
+}
+
+.ph-page__intro {
+  font-size: var(--fs-h2);
+  line-height: var(--lh-body);
+  color: var(--text-muted);
+  max-width: 46ch;
+}
+
+/* Titik persegi merek menutup judul halaman (DS-53). */
+.ph-page__dot {
+  width: 0.36em;
+  height: 0.36em;
+  margin-inline-start: 0.08em;
+  vertical-align: baseline;
+}
+
+.ph-page__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+  margin-block-start: var(--s-12);
+  min-width: 0;
+}

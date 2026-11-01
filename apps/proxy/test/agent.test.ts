@@ -195,6 +195,42 @@ describe('agent loop', () => {
     expect(run.reason).toBe('no_verdict');
   });
 
+  it('nudges the model to submit on the last allowed step', async () => {
+    const { result, features } = cautionCase();
+    const requests: LlmRequest[] = [];
+    const llm = fakeChain([
+      async () =>
+        response([
+          { id: 'c1', name: 'list_forms', args: {} },
+          { id: 'c2', name: 'get_form_target', args: {} },
+          { id: 'c3', name: 'list_external_resources', args: {} },
+        ]),
+      async (req) => {
+        requests.push(req);
+        return response([
+          {
+            id: 'c4',
+            name: 'submit_verdict',
+            args: {
+              verdict: 'caution',
+              confidence: 0.6,
+              reasons: ['Perlu diperiksa.'],
+              evidenceRefs: [],
+            },
+          },
+        ]);
+      },
+    ]);
+
+    const run = await runAgent(llm, { ...agentInput(result, features), maxSteps: 2 });
+    expect(run.ok).toBe(true);
+    const nudge = requests[0].messages.find(
+      (message) =>
+        message.role === 'user' && String(message.content).includes('Jangan memanggil alat lain'),
+    );
+    expect(nudge).toBeDefined();
+  });
+
   it('cannot lower a danger floor via an injected neutral verdict', async () => {
     const { result, features } = dangerCase();
     const llm = fakeChain([

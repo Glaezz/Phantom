@@ -41,6 +41,22 @@ function outcomeForStatus(status: number): LlmFailureOutcome {
   return `http_${status}`;
 }
 
+// Gemini's functionDeclarations.parameters is an OpenAPI subset, not full JSON Schema.
+// Unknown keywords such as additionalProperties make the whole request fail with 400.
+const UNSUPPORTED_SCHEMA_KEYS = new Set(['$schema', 'additionalProperties', 'unevaluatedProperties']);
+
+function toGeminiSchema(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(toGeminiSchema);
+  if (value === null || typeof value !== 'object') return value;
+
+  const result: Record<string, unknown> = {};
+  for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
+    if (UNSUPPORTED_SCHEMA_KEYS.has(key)) continue;
+    result[key] = toGeminiSchema(child);
+  }
+  return result;
+}
+
 export function createGeminiProvider(model: string, apiKey: string): LlmProvider {
   const profile = getModelProfile('gemini', model);
 
@@ -67,7 +83,7 @@ export function createGeminiProvider(model: string, apiKey: string): LlmProvider
             functionDeclarations: req.tools.map((tool) => ({
               name: tool.name,
               description: tool.description,
-              parameters: tool.parameters,
+              parameters: toGeminiSchema(tool.parameters),
             })),
           },
         ];

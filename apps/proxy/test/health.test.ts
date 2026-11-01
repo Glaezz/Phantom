@@ -15,7 +15,7 @@ describe('/health', () => {
         chain: [
           'gemini:gemini-3.5-flash-lite',
           'gemini:gemini-3.1-flash-lite',
-          'groq:qwen/qwen3.6-27b',
+          'groq:qwen/qwen3.8-27b',
         ],
         configured: { gemini: true, groq: false },
       },

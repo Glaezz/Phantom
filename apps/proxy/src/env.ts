@@ -24,7 +24,7 @@ export interface AppConfig {
 }
 
 const DEFAULT_CHAIN =
-  'gemini:gemini-3.5-flash-lite,gemini:gemini-3.1-flash-lite,groq:qwen/qwen3.6-27b';
+  'gemini:gemini-3.5-flash-lite,gemini:gemini-3.1-flash-lite,groq:qwen/qwen3.8-27b';
 
 function positiveInt(env: Record<string, unknown>, key: string, fallback: number): number {
   const raw = env[key];

@@ -12,7 +12,8 @@ export function getModelProfile(provider: 'gemini' | 'groq', model: string): Mod
       provider,
       model,
       maxOutputTokens: 512,
-      // Gemini 3.x supports thinking levels; a 400 response retries without this field.
+      // AGT-01: penalaran diminimalkan agar respons cepat. Gemini 3.x menolak
+      // thinkingBudget 0, jadi tingkat terendah yang didukung dipakai.
       thinkingLevel: 'minimal',
     };
   }

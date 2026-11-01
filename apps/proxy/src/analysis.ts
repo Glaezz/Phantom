@@ -34,12 +34,20 @@ export interface AgentResponse {
   model?: string;
   steps?: number;
   trace?: AgentTraceStep[];
+  verdict?: AgentVerdict['verdict'];
+  confidence?: number;
+  reasons?: string[];
+  capped?: boolean;
+  usage?: { input: number; output: number };
 }
 
 export interface CacheResponse {
   key: string;
   hit: boolean;
   written: boolean;
+  reasons?: string[];
+  createdAt?: number;
+  expiresAt?: number;
 }
 
 export interface AnalysisInput {
@@ -159,7 +167,14 @@ export async function prepareAnalysis(
           skipReason: 'cacheHit',
         },
         degraded: [],
-        cache: { key, hit: true, written: false },
+        cache: {
+          key,
+          hit: true,
+          written: false,
+          reasons: record.reasons.slice(0, 3),
+          createdAt: record.createdAt,
+          expiresAt: record.expiresAt,
+        },
         stages,
       };
     }
@@ -236,7 +251,32 @@ export async function prepareAnalysis(
 
 function agentFailureDegraded(run: AgentRunResult): string[] {
   if (run.ok) return [];
-  return [run.reason];
+  if (run.reason === 'agent_timeout') return ['agent_timeout'];
+  if (run.reason === 'llm_unavailable') return ['llm_unavailable'];
+  return [];
+}
+
+/** Domains the agent actually probed through `domain_age`, deduplicated. */
+function domainsFromTools(
+  trace: AgentTraceStep[],
+  fallback: string | null,
+  prepared: PreparedAnalysis,
+): { domain: string; ageDays: number | null }[] {
+  const domains = new Set<string>();
+  for (const step of trace) {
+    for (const call of step.toolCalls) {
+      if (call.name !== 'domain_age') continue;
+      const domain = call.args.domain;
+      if (typeof domain === 'string' && domain) domains.add(domain);
+    }
+  }
+  const registered = prepared.result.page.registeredDomain;
+  if (prepared.degraded.includes('rdap_unavailable') && registered) {
+    // RDAP gagal di prepareAnalysis: laporkan domainnya sebagai "tidak dapat diperiksa".
+    domains.add(registered);
+  }
+  if (domains.size === 0 && fallback) domains.add(fallback);
+  return [...domains].map((domain) => ({ domain, ageDays: null }));
 }
 
 export async function runPreparedAgent(
@@ -346,6 +386,11 @@ export async function runPreparedAgent(
       model: run.model,
       steps: run.steps,
       trace: run.trace,
+      verdict: run.verdict.verdict,
+      confidence: run.verdict.confidence,
+      reasons: run.verdict.reasons.slice(0, 3),
+      capped: merged.capped,
+      usage: { input: run.usage.inputTokens, output: run.usage.outputTokens },
     },
     tokens: { input: run.usage.inputTokens, output: run.usage.outputTokens },
   };
