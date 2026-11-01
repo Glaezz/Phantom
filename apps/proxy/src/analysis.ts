@@ -5,6 +5,8 @@ import {
   deriveL3Steps,
   deriveL4Steps,
   mergeVerdict,
+  parseUrl,
+  type AnalyzeL3Entry,
   type AgentVerdict,
   type AnalysisResult,
   type CacheStore,
@@ -62,13 +64,15 @@ export interface PreparedAnalysis {
   degraded: string[];
   cache: CacheResponse;
   stages: Record<string, number>;
+  l3?: AnalyzeL3Entry[];
+  l3Disabled?: boolean;
 }
 
 export interface PreparedWithAgent extends PreparedAnalysis {
   agent: AgentResponse | null;
   tokens: { input: number; output: number };
   /** L3 lookups actually performed; `domainAge` fills the rest when results exist. */
-  l3: { domain: string; ageDays: number | null }[];
+  l3: AnalyzeL3Entry[];
 }
 
 const RANK: Record<'neutral' | 'caution' | 'danger', number> = {
@@ -109,6 +113,7 @@ export async function prepareAnalysis(
 ): Promise<PreparedAnalysis> {
   // The extracted features are authoritative: they come from the page the user is on.
   // Using input.url alone could analyse a different host than the one inspected.
+  deps.agentDeadlineAt ??= Date.now() + Math.min(deps.config.agentDeadlineMs, 5_500);
   const url = input.features?.url ?? input.url;
   const stages: Record<string, number> = {};
   let started = performance.now();
@@ -162,19 +167,24 @@ export async function prepareAnalysis(
 
   let result = initial;
   const degraded: string[] = [];
+  const l3: AnalyzeL3Entry[] = [];
 
   // Tanpa izin umur domain, L3 tidak pernah dijalankan: katakan begitu, bukan "tidak tersedia".
   if (!input.consent.domainAge) {
     return {
       result,
-      final: { status: result.status, source: 'rules', capped: false, skipReason: 'deepCheckDisabled' },
+      final: { status: result.status, source: 'rules', capped: false },
+      l3Disabled: true,
       degraded,
+      l3,
       cache: { key, hit: false, written: false },
       stages,
     };
   }
 
-  if (result.page.registeredDomain) {
+  if (result.page.registeredDomain && parseUrl(url).isPrivateSuffix) {
+    l3.push({ domain: result.page.registeredDomain, ageDays: null, reason: 'private_hosting' });
+  } else if (result.page.registeredDomain) {
     started = performance.now();
     const timeout = timeoutSignal(3_000);
     let ageDays: number | null = null;
@@ -189,6 +199,7 @@ export async function prepareAnalysis(
       stages.rdap = performance.now() - started;
     }
 
+    l3.push({ domain: result.page.registeredDomain!, ageDays });
     if (ageDays === null) {
       degraded.push('rdap_unavailable');
     } else {
@@ -207,6 +218,7 @@ export async function prepareAnalysis(
       result,
       final: { status: result.status, source: 'rules', capped: false },
       degraded,
+      l3,
       cache: { key, hit: false, written: false },
       stages,
     };
@@ -216,6 +228,7 @@ export async function prepareAnalysis(
     result,
     final: { status: result.status, source: 'rules', capped: false },
     degraded,
+    l3,
     cache: { key, hit: false, written: false },
     stages,
   };
@@ -223,32 +236,7 @@ export async function prepareAnalysis(
 
 function agentFailureDegraded(run: AgentRunResult): string[] {
   if (run.ok) return [];
-  if (run.reason === 'agent_timeout') return ['agent_timeout'];
-  if (run.reason === 'llm_unavailable') return ['llm_unavailable'];
-  return [];
-}
-
-/** Domains the agent actually probed through `domain_age`, deduplicated. */
-function domainsFromTools(
-  trace: AgentTraceStep[],
-  fallback: string | null,
-  prepared: PreparedAnalysis,
-): { domain: string; ageDays: number | null }[] {
-  const domains = new Set<string>();
-  for (const step of trace) {
-    for (const call of step.toolCalls) {
-      if (call.name !== 'domain_age') continue;
-      const domain = call.args.domain;
-      if (typeof domain === 'string' && domain) domains.add(domain);
-    }
-  }
-  const registered = prepared.result.page.registeredDomain;
-  if (prepared.degraded.includes('rdap_unavailable') && registered) {
-    // RDAP gagal di prepareAnalysis: laporkan domainnya sebagai "tidak dapat diperiksa".
-    domains.add(registered);
-  }
-  if (domains.size === 0 && fallback) domains.add(fallback);
-  return [...domains].map((domain) => ({ domain, ageDays: null }));
+  return [run.reason];
 }
 
 export async function runPreparedAgent(
@@ -257,7 +245,7 @@ export async function runPreparedAgent(
   deps: PipelineDeps,
 ): Promise<PreparedWithAgent> {
   if (prepared.cache.hit || input.noAi || !input.consent.cloud || !prepared.result.needsAgent) {
-    return { ...prepared, agent: null, tokens: { input: 0, output: 0 }, l3: [] };
+    return { ...prepared, agent: null, tokens: { input: 0, output: 0 }, l3: prepared.l3 ?? [] };
   }
 
   const started = performance.now();
@@ -270,7 +258,10 @@ export async function runPreparedAgent(
       result: prepared.result,
       features: input.features ?? null,
       consent: { cloud: input.consent.cloud, domainAge: input.consent.domainAge },
-      rdap: deps.rdap,
+      rdap: { async ageDays(domain, options) {
+        const recorded = prepared.l3?.find((entry) => entry.domain === domain);
+        return recorded ? recorded.ageDays : deps.rdap.ageDays(domain, options);
+      } },
       signal: new AbortController().signal,
       maxSteps: deps.config.agentMaxSteps,
       deadlineMs: Math.max(1, deps.agentDeadlineAt - Date.now()),
@@ -281,7 +272,7 @@ export async function runPreparedAgent(
       degraded: [...new Set([...prepared.degraded, 'llm_unavailable'])],
       agent: null,
       tokens: { input: 0, output: 0 },
-      l3: [],
+      l3: prepared.l3 ?? [],
     };
   }
   prepared.stages.agent = performance.now() - started;
@@ -292,7 +283,7 @@ export async function runPreparedAgent(
       degraded: [...new Set([...prepared.degraded, ...agentFailureDegraded(run)])],
       agent: null,
       tokens: { input: run.usage.inputTokens, output: run.usage.outputTokens },
-      l3: domainsFromTools(run.trace, prepared.result.page.registeredDomain, prepared),
+      l3: prepared.l3 ?? [],
     };
   }
 
@@ -347,7 +338,7 @@ export async function runPreparedAgent(
   return {
     ...prepared,
     final,
-    l3: domainsFromTools(run.trace, prepared.result.page.registeredDomain, prepared),
+    l3: prepared.l3 ?? [],
     agent: {
       used: true,
       provider: run.provider,
@@ -373,7 +364,7 @@ export function traceRows(prepared: PreparedWithAgent): TraceRows {
         : prepared.degraded.includes('rdap_unavailable') && prepared.result.page.registeredDomain
           ? [{ domain: prepared.result.page.registeredDomain, ageDays: null }]
           : [],
-      prepared.final.skipReason === 'deepCheckDisabled' ? 'deepCheckDisabled' : undefined,
+      prepared.l3Disabled || prepared.final.skipReason === 'deepCheckDisabled' ? 'deepCheckDisabled' : undefined,
     ),
     l4: deriveL4Steps(
       prepared.agent
@@ -385,7 +376,8 @@ export function traceRows(prepared: PreparedWithAgent): TraceRows {
               prepared.final.status === 'official' ? 'neutral' : prepared.final.status,
           }
         : null,
-      prepared.final.skipReason,
+      prepared.final.skipReason ?? (!prepared.result.needsAgent ? 'notNeeded' : undefined),
+      prepared.degraded.find((reason) => reason.startsWith('llm_') || reason === 'agent_timeout' || reason === 'no_verdict'),
     ),
   };
 }

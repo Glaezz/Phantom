@@ -50,7 +50,7 @@ describe('deep check reporting', () => {
     const verdict = toVerdict(
       local,
       {
-        l3: [{ domain: 'roblox.com.kz', ageDays: 340 }],
+        l3: [{ stage: 'L3', message: 'Umur domain 340 hari.', data: { domain: 'roblox.com.kz', ageDays: 340 } }],
         l4: [{ stage: 'L4', message: 'Pemeriksaan AI selesai.', data: { tool: 'agent', verdict: 'danger' } }],
       },
       {},

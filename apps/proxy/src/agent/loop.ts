@@ -9,7 +9,7 @@ import {
   type PageFeatures,
 } from '@phantom/core';
 import type { LlmChain } from '../llm/chain';
-import { AgentDeadlineError } from '../llm/errors';
+import { AgentDeadlineError, LlmProviderError } from '../llm/errors';
 import { cleanText } from '../util/sanitize';
 import { truncate } from '../util/truncate';
 import { timeoutSignal } from '../util/timeout';
@@ -116,7 +116,8 @@ export async function runAgent(chain: LlmChain, input: AgentInput): Promise<Agen
     resultIds,
   };
 
-  const failure = (reason: 'llm_unavailable' | 'agent_timeout' | 'no_verdict') =>
+  let lastFailure: import('./schemas').AgentRunFailure['reason'] = 'llm_unavailable';
+  const failure = (reason: import('./schemas').AgentRunFailure['reason']) =>
     ({ ok: false as const, reason, trace, usage });
 
   try {
@@ -152,6 +153,12 @@ export async function runAgent(chain: LlmChain, input: AgentInput): Promise<Agen
           if (error instanceof AgentDeadlineError || timeout.signal.aborted) {
             return failure('agent_timeout');
           }
+          lastFailure = error instanceof LlmProviderError
+            ? error.status === 429 ? 'llm_quota'
+              : error.outcome === 'model_not_found' ? 'llm_model_unavailable'
+              : error.outcome === 'invalid_output' ? 'llm_invalid_response'
+              : error.outcome === 'timeout' ? 'agent_timeout' : 'llm_unavailable'
+            : error instanceof Error && error.name === 'AbortError' ? 'agent_timeout' : 'llm_unavailable';
           entryFailed = true;
           break;
         }
@@ -267,7 +274,7 @@ export async function runAgent(chain: LlmChain, input: AgentInput): Promise<Agen
       return failure('no_verdict');
     }
 
-    return failure('llm_unavailable');
+    return failure(lastFailure);
   } finally {
     timeout.cleanup();
   }

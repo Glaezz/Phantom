@@ -37,6 +37,35 @@ describe('public API', () => {
     ).toBe(true);
   });
 
+  it('recognizes Meta impersonation without assets but keeps it neutral', () => {
+    const result = analyze({
+      url: 'https://secureprofiles2026-indol.vercel.app/required.html',
+      features: features({ title: 'Meta | Community Standards' }),
+    });
+    expect(result.signals).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: 'BRAND_CLAIM_UNOFFICIAL_DOMAIN', brandId: 'meta' }),
+    ]));
+    expect(result.status).toBe('neutral');
+    expect(engine.matchOfficial('https://www.meta.com').matched).toBe(true);
+    expect(engine.matchOfficial('https://www.facebook.com').matched).toBe(true);
+    expect(engine.matchOfficial('https://someone.facebook.com').matched).toBe(false);
+  });
+
+  it('flags a Meta claim on free hosting with official hotlinked assets', () => {
+    const result = analyze({
+      url: 'https://secureprofiles2026-indol.vercel.app/careers.html',
+      features: features({
+        title: 'Meta | Request Review',
+        externalResources: [{ kind: 'img', url: 'https://www.google.com/logo.png' }],
+      }),
+    });
+    expect(result.signals.map((signal) => signal.id)).toEqual(expect.arrayContaining([
+      'BRAND_CLAIM_UNOFFICIAL_DOMAIN', 'FREE_SUBDOMAIN_PLATFORM', 'HOTLINKS_OFFICIAL_ASSETS',
+    ]));
+    expect(result.status).toBe('caution');
+    expect(result.needsAgent).toBe(true);
+  });
+
   it('exposes cache and verdict helpers', async () => {
     expect(await cacheKey('https://example.com/a')).toMatch(/^[0-9a-f]{64}$/);
     expect(

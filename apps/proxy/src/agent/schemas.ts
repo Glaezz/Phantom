@@ -24,7 +24,7 @@ export interface AgentRunSuccess {
 
 export interface AgentRunFailure {
   ok: false;
-  reason: 'llm_unavailable' | 'agent_timeout' | 'no_verdict';
+  reason: 'llm_unavailable' | 'agent_timeout' | 'no_verdict' | 'llm_quota' | 'llm_model_unavailable' | 'llm_invalid_response';
   trace: AgentTraceStep[];
   usage: { inputTokens: number; outputTokens: number };
 }

@@ -1,10 +1,8 @@
 import {
   BRANDS,
   RULES_VERSION,
-  deriveL3Steps,
   deriveL4Steps,
   type AnalysisResult,
-  type AnalyzeL3Entry,
   type TraceStep as CoreTraceStep,
 } from '@phantom/core';
 import type { Verdict, TraceStep } from '../ui/types';
@@ -33,7 +31,7 @@ function stageFor(stage: CoreTraceStep['stage']): TraceStep['stage'] {
 
 // Langkah tambahan dari proxy (L3 RDAP, L4 agen AI).
 export interface ExtraTrace {
-  l3?: AnalyzeL3Entry[];
+  l3?: CoreTraceStep[];
   l4?: CoreTraceStep[];
 }
 
@@ -96,8 +94,7 @@ function deepSteps(
   skipReason?: keyof typeof SKIP_REASON_COPY,
 ): TraceStep[] {
   // `notNeeded` = aturan lokal sudah memutuskan; jangan ditampilkan sebagai "dimatikan di pengaturan".
-  const disabled = skipReason === 'deepCheckDisabled';
-  const l3 = extra ? deriveL3Steps(extra.l3 ?? [], disabled ? 'deepCheckDisabled' : undefined) : [];
+  const l3 = extra?.l3 ?? [];
   // Baris L4 dari proxy dipakai apa adanya: deriveL4Steps(null) selalu mengklaim AI gagal,
   // padahal proxy mungkin memang tidak memanggil agen (CORE-09).
   const proxyL4 = extra?.l4?.[0];

@@ -237,6 +237,7 @@ async function executeTool(
       if (!pageDomain || requested !== pageDomain.toLowerCase()) {
         return { error: 'domain_not_page' };
       }
+      if (parseUrl(pageUrl).isPrivateSuffix) return { ageDays: null, reason: 'private_hosting' };
       const ageDays = await context.rdap.ageDays(pageDomain, { signal: context.signal });
       return ageDays === null
         ? { ageDays: null, reason: 'rdap_unavailable' }
