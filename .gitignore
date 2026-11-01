@@ -5,7 +5,7 @@ dist
 .env
 .env.local
 .dev.vars
-*.zip
+.zip
 .output
 .wxt
 .agents
