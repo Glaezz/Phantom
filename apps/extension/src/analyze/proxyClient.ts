@@ -1,42 +1,38 @@
-import type { AnalyzeResponse, PageFeatures } from '@phantom/core';
+import { AnalyzeRequestSchema, AnalyzeResponseSchema, type AnalyzeResponse, type PageFeatures } from '@phantom/core';
+import { browser } from 'wxt/browser';
 
-// Only place in the extension that talks to the proxy. Failures never throw:
-// any problem degrades to rules-only so the overlay keeps working offline.
 export type DeepResult =
   | { ok: true; data: AnalyzeResponse }
   | { ok: false; reason: 'rate_limited' | 'agent_timeout' | 'llm_unavailable' | 'offline' };
-
-const PROXY_URL = (import.meta.env.VITE_PROXY_API_URL ?? 'http://localhost:8787').replace(/\/+$/, '');
-
-// Matches the 6 s hold budget in EXT-04.
-const TIMEOUT_MS = 6000;
 
 export async function analyzeDeep(
   features: PageFeatures,
   consent: { cloud: boolean; domainAge: boolean },
   signal?: AbortSignal,
 ): Promise<DeepResult> {
-  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-    return { ok: false, reason: 'offline' };
-  }
-
-  const timeout = AbortSignal.timeout ? AbortSignal.timeout(TIMEOUT_MS) : undefined;
-  const combined = signal && timeout ? AbortSignal.any([signal, timeout]) : (signal ?? timeout);
-
-  try {
-    const response = await fetch(`${PROXY_URL}/api/analyze`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: features.url, features, consent }),
-      signal: combined,
-    });
-
-    if (response.status === 429) return { ok: false, reason: 'rate_limited' };
-    if (!response.ok) return { ok: false, reason: 'llm_unavailable' };
-
-    return { ok: true, data: (await response.json()) as AnalyzeResponse };
-  } catch (error) {
-    const aborted = error instanceof DOMException && error.name === 'AbortError';
-    return { ok: false, reason: aborted ? 'agent_timeout' : 'llm_unavailable' };
-  }
+  const request = AnalyzeRequestSchema.safeParse({ url: features.url, features, consent });
+  if (!request.success || signal?.aborted) return { ok: false, reason: 'llm_unavailable' };
+  const id = crypto.randomUUID();
+  return new Promise((resolve) => {
+    let finished = false;
+    const finish = (result: DeepResult) => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
+      signal?.removeEventListener('abort', cancel);
+      resolve(result);
+    };
+    const cancel = () => {
+      void browser.runtime.sendMessage({ type: 'phantom:cancelAnalyze', id }).catch(() => {});
+      finish({ ok: false, reason: 'agent_timeout' });
+    };
+    const timer = setTimeout(cancel, 6000);
+    signal?.addEventListener('abort', cancel, { once: true });
+    void browser.runtime.sendMessage({ type: 'phantom:analyze', id, request: request.data }).then((reply) => {
+      const parsed = AnalyzeResponseSchema.safeParse(reply?.data);
+      finish(reply?.ok && parsed.success
+        ? { ok: true, data: parsed.data }
+        : { ok: false, reason: reply?.reason === 'rate_limited' ? 'rate_limited' : 'llm_unavailable' });
+    }, () => finish({ ok: false, reason: 'llm_unavailable' }));
+  });
 }

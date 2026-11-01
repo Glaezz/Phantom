@@ -1,4 +1,5 @@
 import { defineConfig } from 'wxt';
+import { loadEnv } from 'vite';
 
 const icons = {
   16: '/icon/16.png',
@@ -8,14 +9,16 @@ const icons = {
   128: '/icon/128.png',
 };
 
+const env = loadEnv(process.env.NODE_ENV === 'production' ? 'production' : 'development', process.cwd(), 'VITE_');
+
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   manifest: {
     name: 'Phantom',
     description: 'Penjaga Laman - verifikasi kanal resmi sebelum Anda mengirim data.',
     permissions: ['storage'],
-    // Dev proxy (L3/L4). Tanpa ini fetch content script ke localhost diblokir browser.
-    host_permissions: ['http://localhost:8787/*'],
+    // Background fetch uses the same build-time proxy origin as proxyClient.
+    host_permissions: [`${new URL(env.VITE_PROXY_API_URL ?? 'http://localhost:8787').origin}/*`],
     icons,
     action: { default_icon: icons },
     web_accessible_resources: [

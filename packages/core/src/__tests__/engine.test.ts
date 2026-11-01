@@ -32,6 +32,27 @@ describe('engine end-to-end', () => {
     expect(result.status).toBe('neutral');
   });
 
+  it('keeps a portfolio on free hosting neutral without a brand claim', () => {
+    const result = engine.analyze({
+      url: 'https://portfolio.vercel.app',
+      features: features({
+        title: 'Portfolio Desainer',
+        externalResources: [{ kind: 'img', url: 'https://www.bca.co.id/logo.png' }],
+      }),
+    });
+    expect(result.status).toBe('neutral');
+    expect(result.needsAgent).toBe(false);
+  });
+
+  it('keeps a brand claim on free hosting neutral without hotlinked assets', () => {
+    const result = engine.analyze({
+      url: 'https://blog.vercel.app',
+      features: features({ title: 'BCA | Studi Kasus' }),
+    });
+    expect(result.status).toBe('neutral');
+    expect(result.needsAgent).toBe(false);
+  });
+
   it('does not escalate a weak claim with a credential field alone', () => {
     const result = engine.analyze({
       url: 'https://blog.example',

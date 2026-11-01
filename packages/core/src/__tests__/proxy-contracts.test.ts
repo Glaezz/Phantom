@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '../engine';
-import { deriveL3Steps, deriveL4Steps, mergeProxyResult, needsDeepCheck } from '../proxy-contracts';
+import { AnalyzeResponseSchema, deriveL3Steps, deriveL4Steps, mergeProxyResult, needsDeepCheck } from '../proxy-contracts';
 import type { AnalysisResult } from '../schemas';
 import { fixtureBrands } from './fixtures/brands.fixture';
 import { features, passwordForm } from './fixtures/page.fixture';
@@ -12,6 +12,13 @@ function analysis(url: string, page = features({ url })): AnalysisResult {
 }
 
 describe('proxy contracts', () => {
+  it('validates the proxy L3 trace contract, not raw RDAP entries', () => {
+    const result = analysis('https://example.test/');
+    const response = { result, final: { status: result.status, source: 'rules', capped: false } };
+    const l3 = deriveL3Steps([{ domain: 'example.test', ageDays: 4 }]);
+    expect(AnalyzeResponseSchema.parse({ ...response, l3 }).l3).toEqual(l3);
+    expect(AnalyzeResponseSchema.safeParse({ ...response, l3: [{ domain: 'example.test', ageDays: 4 }] }).success).toBe(false);
+  });
   it('keeps the worse of local floor and remote verdict', () => {
     const local = analysis(
       'https://login-xyz.my.id/',
@@ -45,7 +52,7 @@ describe('proxy contracts', () => {
     ).toBe('official');
   });
 
-  it('only asks the proxy when the page has a credential field', () => {
+  it('asks the proxy for caution pages needing investigation', () => {
     expect(needsDeepCheck(analysis('https://example.test/', features({ url: 'https://example.test/' })))).toBe(
       false,
     );
@@ -58,6 +65,15 @@ describe('proxy contracts', () => {
     );
     expect(risky.status).toBe('caution');
     expect(needsDeepCheck(risky)).toBe(true);
+    const imitation = analysis(
+      'https://help.vercel.app/',
+      features({
+        title: 'BCA | Konfirmasi',
+        externalResources: [{ kind: 'img', url: 'https://www.bca.co.id/logo.png' }],
+      }),
+    );
+    expect(imitation.status).toBe('caution');
+    expect(needsDeepCheck(imitation)).toBe(true);
   });
 
   it('derives L3 and L4 rows, including the cache skip', () => {

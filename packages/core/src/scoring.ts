@@ -24,6 +24,7 @@ export function scoreSignals(signals: SignalHit[]): ScoreResult {
   const hasH2 = ids.has('CREDENTIAL_FIELD');
   const hasH3 = ids.has('FORM_CROSS_DOMAIN');
   const hasImitation = IMITATION_SIGNALS.some((id) => ids.has(id));
+  const hasC4 = hasH1 && ids.has('FREE_SUBDOMAIN_PLATFORM') && ids.has('HOTLINKS_OFFICIAL_ASSETS');
 
   const trace: TraceStep[] = [];
   let status: ScoreResult['status'] = 'neutral';
@@ -58,6 +59,13 @@ export function scoreSignals(signals: SignalHit[]): ScoreResult {
       message: 'Kemiripan alamat dengan merek resmi menghasilkan status Hati-hati.',
       data: { rule: 'C3', softSignals: softIds.size },
     });
+  } else if (hasC4) {
+    status = 'caution';
+    trace.push({
+      stage: 'SCORE',
+      message: 'Klaim merek pada hosting gratis disertai aset resmi menghasilkan status Hati-hati.',
+      data: { rule: 'C4', softSignals: softIds.size },
+    });
   } else {
     trace.push({
       stage: 'SCORE',
@@ -66,7 +74,7 @@ export function scoreSignals(signals: SignalHit[]): ScoreResult {
     });
   }
 
-  const needsAgent = status === 'caution' && hasH2;
+  const needsAgent = status === 'caution' && (hasH2 || hasC4);
 
   return { status, floor, needsAgent, trace };
 }

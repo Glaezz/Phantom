@@ -245,8 +245,9 @@ describe('/api/analyze', () => {
       testEnv({ GEMINI_API_KEY: '', GROQ_API_KEY: '' }),
     );
     const body = (await response.json()) as any;
-    expect(body.final.skipReason).toBe('deepCheckDisabled');
+    expect(body.final.skipReason).toBeUndefined();
     expect(body.l3[0].data).toMatchObject({ available: false, skippedBy: 'consent' });
+    expect(body.l4[0].data.skippedBy).toBeUndefined();
   });
 
   it('marks L4 as served from cache on a cache hit', async () => {

@@ -27,12 +27,13 @@ export const FinalVerdictSchema = z.object({
 export const L3EntrySchema = z.object({
   domain: z.string().max(253),
   ageDays: z.number().int().nonnegative().nullable(),
+  reason: z.enum(['private_hosting']).optional(),
 });
 
 export const AnalyzeResponseSchema = z.object({
   result: AnalysisResultSchema,
   final: FinalVerdictSchema,
-  l3: z.array(L3EntrySchema).optional(),
+  l3: z.array(TraceStepSchema).optional(),
   l4: z.array(TraceStepSchema).optional(),
   degraded: z.array(z.string()).optional(),
 });
@@ -64,7 +65,7 @@ export function mergeProxyResult(
   const floor = local.floor;
   return RANK[remote.final.status] >= RANK[floor] ? remote.final.status : floor;
 }
-/** L3 is only worth a network round trip when the page asks for credentials. */
+/** Deep checks run for ambiguous credential pages or C4 impersonation evidence. */
 export function needsDeepCheck(result: AnalysisResult): boolean {
   return result.status !== 'official' && result.needsAgent;
 }
@@ -88,8 +89,10 @@ export function deriveL3Steps(
     entry.ageDays === null
       ? {
           stage: 'L3',
-          message: 'Umur domain tidak dapat diperiksa.',
-          data: { tool: 'rdap', domain: entry.domain, available: false },
+          message: entry.reason === 'private_hosting'
+            ? 'Umur situs tidak tersedia untuk subdomain hosting ini.'
+            : 'Umur domain tidak dapat diperiksa.',
+          data: { tool: 'rdap', domain: entry.domain, available: false, ...(entry.reason ? { reason: entry.reason } : {}) },
         }
       : {
           stage: 'L3',
@@ -101,7 +104,8 @@ export function deriveL3Steps(
 
 export function deriveL4Steps(
   agent: AgentSummaryForTrace | null,
-  skipReason?: 'cacheHit' | 'deepCheckDisabled',
+  skipReason?: 'cacheHit' | 'deepCheckDisabled' | 'notNeeded',
+  failureReason?: string,
 ): TraceStep[] {
   if (skipReason === 'deepCheckDisabled') {
     return [
@@ -123,12 +127,20 @@ export function deriveL4Steps(
     ];
   }
 
+  if (skipReason === 'notNeeded') {
+    return [{ stage: 'L4', message: 'Pemeriksaan AI tidak diperlukan berdasarkan hasil aturan.', data: { tool: 'agent', skippedBy: 'rules' } }];
+  }
+
   if (!agent || !agent.used) {
     return [
       {
         stage: 'L4',
-        message: 'Pemeriksaan AI tidak tersedia.',
-        data: { tool: 'agent', available: false },
+        message: failureReason === 'agent_timeout' ? 'Pemeriksaan AI melewati batas waktu.'
+          : failureReason === 'llm_model_unavailable' ? 'Model layanan AI tidak tersedia; hasil aturan tetap dipakai.'
+          : failureReason === 'llm_quota' ? 'Kuota layanan AI sedang tidak tersedia.'
+          : failureReason === 'no_verdict' || failureReason === 'llm_invalid_response' ? 'Hasil pemeriksaan AI tidak valid; hasil aturan tetap dipakai.'
+          : 'Pemeriksaan AI tidak tersedia.',
+        data: { tool: 'agent', available: false, ...(failureReason ? { reason: failureReason } : {}) },
       } satisfies TraceStep,
     ];
   }
