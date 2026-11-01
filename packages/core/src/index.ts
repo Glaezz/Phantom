@@ -29,7 +29,8 @@ export type { AnalyzeInput, Engine };
 
 export { parseUrl } from './url';
 export type { ParsedUrl } from './url';
-export { isCredentialField, resolveFormTarget } from './l2';
+export { isCredentialField, isCredentialText, resolveFormTarget } from './l2';
+export { isSharedContentPath } from './l0';
 export type { ResolvedTarget } from './l2';
 export { detectBrandClaims } from './claims';
 export type { BrandClaim, ClaimTextInput } from './claims';

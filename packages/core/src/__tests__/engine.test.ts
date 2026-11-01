@@ -44,12 +44,12 @@ describe('engine end-to-end', () => {
     expect(result.needsAgent).toBe(false);
   });
 
-  it('keeps a brand claim on free hosting neutral without hotlinked assets', () => {
+  it('keeps a brand claim on free hosting at caution without paging the agent', () => {
     const result = engine.analyze({
       url: 'https://blog.vercel.app',
       features: features({ title: 'BCA | Studi Kasus' }),
     });
-    expect(result.status).toBe('neutral');
+    expect(result.status).toBe('caution');
     expect(result.needsAgent).toBe(false);
   });
 
@@ -229,13 +229,14 @@ describe('matchOfficial', () => {
       expect.objectContaining({ matched: true, brandIds: ['bca'], via: 'registered' }),
     );
     expect(matchOfficial('https://accounts.google.com/x', index)).toEqual(
-      expect.objectContaining({ matched: true, brandIds: ['google_oauth'], via: 'exact' }),
+      expect.objectContaining({ matched: true, brandIds: ['google_oauth'], via: 'registered' }),
     );
   });
 
-  it('does not match lookalikes or shared hosts', () => {
+  it('does not match lookalikes or shared content paths', () => {
     expect(matchOfficial('https://bca.co.id.evil.com', index).matched).toBe(false);
-    expect(matchOfficial('https://sites.google.com/x', index).matched).toBe(false);
+    expect(matchOfficial('https://sites.google.com/site/x', index).matched).toBe(false);
+    expect(matchOfficial('https://docs.google.com/forms/d/e/x/viewform', index).matched).toBe(false);
   });
 
   it('returns every brand that owns a shared domain', () => {

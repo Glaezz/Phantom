@@ -6,6 +6,8 @@ export const BrandSchema = z.object({
   category: z.string().min(1),
   officialDomains: z.array(z.string().min(1)).default([]),
   exactHosts: z.array(z.string().min(1)).default([]),
+  // Path prefixes on an official domain that host user content, not brand-owned pages.
+  sharedContentPaths: z.array(z.string().min(1)).max(20).optional(),
   officialPhones: z.array(z.string()).default([]),
   keywords: z.array(z.string().min(1)).min(1),
   ambiguousToken: z.boolean().default(false),
@@ -41,6 +43,8 @@ export const PageFeaturesSchema = z.object({
   title: z.string().max(200),
   headings: z.array(z.string().max(200)).max(5),
   siteName: z.string().max(200).nullable(),
+  // Visible form labels/headings only; never input values or full page text.
+  formLabels: z.array(z.string().max(200)).max(30).optional(),
   forms: z.array(FormFeatureSchema).max(10),
   externalResources: z.array(ExternalResourceSchema).max(50),
 });
@@ -57,6 +61,9 @@ export const SignalIdSchema = z.enum([
   'SAME_LABEL_DIFFERENT_SUFFIX',
   'BRAND_TOKEN_IN_HOST',
   'CREDENTIAL_FIELD',
+  'CREDENTIAL_TEXT',
+  'SHARED_CONTENT_FORM',
+  'UNVERIFIED_BRAND_CLAIM',
   'BRAND_CLAIM_UNOFFICIAL_DOMAIN',
   'FORM_CROSS_DOMAIN',
   'HOTLINKS_OFFICIAL_ASSETS',

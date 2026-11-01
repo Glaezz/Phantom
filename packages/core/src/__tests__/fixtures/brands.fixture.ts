@@ -73,10 +73,11 @@ export const fixtureBrands: Brand[] = [
   },
   {
     id: 'google_oauth',
-    name: 'Google OAuth',
+    name: 'Google',
     category: 'oauth_payment',
-    officialDomains: [],
+    officialDomains: ['google.com', 'google.co.id'],
     exactHosts: ['accounts.google.com'],
+    sharedContentPaths: ['/forms/', '/site/', '/view/'],
     officialPhones: [],
     keywords: ['google'],
     ambiguousToken: false,

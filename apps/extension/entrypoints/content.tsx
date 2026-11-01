@@ -102,13 +102,13 @@ function Harness() {
     window.addEventListener('popstate', onHistoryChange);
 
     let timer: ReturnType<typeof setTimeout> | undefined;
-    const relevant = 'form, input, select, textarea, h1, meta[property="og:site_name"], meta[name="application-name"], script[src], img[src], link[href], iframe[src]';
+    const relevant = 'form, input, select, textarea, label, legend, [role="heading"], h1, meta[property="og:site_name"], meta[name="application-name"], script[src], img[src], link[href], iframe[src]';
     const observer = new MutationObserver((mutations) => {
       if (!mutations.some((mutation) => {
         if (mutation.type === 'attributes') return true;
         return [...mutation.addedNodes, ...mutation.removedNodes].some((node) =>
           node instanceof Element && (node.matches(relevant) || !!node.querySelector(relevant)) ||
-          node instanceof Text && node.parentElement?.matches('h1')
+          node instanceof Text && node.parentElement?.matches('h1, label, legend, [role="heading"]')
         );
       })) return;
       clearTimeout(timer);
@@ -118,7 +118,7 @@ function Harness() {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['action', 'method', 'type', 'name', 'id', 'autocomplete', 'placeholder', 'src', 'href', 'content'],
+      attributeFilter: ['action', 'method', 'type', 'name', 'id', 'autocomplete', 'placeholder', 'aria-label', 'src', 'href', 'content'],
     });
 
     // Popup menerima verdict siap tampil agar tidak memuat mesin core kedua kali.

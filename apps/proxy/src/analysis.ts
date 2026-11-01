@@ -296,41 +296,42 @@ export async function runPreparedAgent(
 
   if (prepared.cache.key) {
     const effective = cappedVerdict(run.verdict);
-    const ttlDays =
-      effective.verdict === 'neutral'
-        ? deps.config.cacheTtlNeutralDays
-        : deps.config.cacheTtlDangerDays;
-    const now = Date.now();
-    const record = {
-      status: effective.verdict,
-      reasons: effective.reasons.slice(0, 3),
-      createdAt: now,
-      expiresAt: now + ttlDays * 86_400_000,
-      rulesVersion: RULES_VERSION,
-    };
+    // Neutral agent verdicts are not cached: the page may load its form late,
+    // and a stale "safe" answer is costlier than one extra agent run.
+    if (effective.verdict !== 'neutral') {
+      const ttlDays = deps.config.cacheTtlDangerDays;
+      const now = Date.now();
+      const record = {
+        status: effective.verdict,
+        reasons: effective.reasons.slice(0, 3),
+        createdAt: now,
+        expiresAt: now + ttlDays * 86_400_000,
+        rulesVersion: RULES_VERSION,
+      };
 
-    let write: Promise<void> | null = null;
-    try {
-      write = deps.cache.set(prepared.cache.key, record, ttlDays * 86_400);
-    } catch {
-      write = null;
-    }
-
-    if (!write) {
-      prepared.cache = { ...prepared.cache, written: false };
-    } else if (deps.waitUntil) {
+      let write: Promise<void> | null = null;
       try {
-        deps.waitUntil(write.catch(() => undefined));
-        prepared.cache = { ...prepared.cache, written: true };
+        write = deps.cache.set(prepared.cache.key, record, ttlDays * 86_400);
       } catch {
-        prepared.cache = { ...prepared.cache, written: false };
+        write = null;
       }
-    } else {
-      try {
-        await write;
-        prepared.cache = { ...prepared.cache, written: true };
-      } catch {
+
+      if (!write) {
         prepared.cache = { ...prepared.cache, written: false };
+      } else if (deps.waitUntil) {
+        try {
+          deps.waitUntil(write.catch(() => undefined));
+          prepared.cache = { ...prepared.cache, written: true };
+        } catch {
+          prepared.cache = { ...prepared.cache, written: false };
+        }
+      } else {
+        try {
+          await write;
+          prepared.cache = { ...prepared.cache, written: true };
+        } catch {
+          prepared.cache = { ...prepared.cache, written: false };
+        }
       }
     }
   }

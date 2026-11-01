@@ -10,12 +10,33 @@ import { features, passwordForm } from './fixtures/page.fixture';
 const engine = createEngine(loadBrands(brandsData), { validateOutput: true });
 
 describe('shipped brands', () => {
-  it('marks the official Roblox domain official', () => {
-    const result = engine.analyze({ url: 'https://www.roblox.com/login' });
+  it('does not ship Roblox as a verified brand', () => {
+    const brands = loadBrands(brandsData);
+    expect(brands.some((brand) => brand.id === 'roblox')).toBe(false);
+  });
+
+  it('marks an official Indonesian brand official', () => {
+    const result = engine.analyze({ url: 'https://www.bca.co.id/login' });
     expect(result.status).toBe('official');
   });
 
-  it('marks a Roblox lookalike with a password field dangerous', () => {
+  it('catches the reported Roblox URL when the page claims Roblox', () => {
+    const url = 'https://roblox.com.kz/login?returnUrl=137614935';
+    const result = engine.analyze({
+      url,
+      features: features({
+        url,
+        title: 'Roblox',
+        headings: ['Login to Roblox'],
+        forms: [passwordForm()],
+      }),
+    });
+    expect(result.status).toBe('caution');
+    expect(result.needsAgent).toBe(true);
+    expect(result.signals.map((signal) => signal.id)).toContain('UNVERIFIED_BRAND_CLAIM');
+  });
+
+  it('sends an unknown-brand lookalike with credentials to the agent', () => {
     const result = engine.analyze({
       url: 'https://www.roblox.com.et/users/1413971851/profile',
       features: features({
@@ -25,11 +46,12 @@ describe('shipped brands', () => {
         forms: [passwordForm()],
       }),
     });
-    expect(result.status).toBe('danger');
-    expect(result.needsAgent).toBe(false);
+    expect(result.status).toBe('caution');
+    expect(result.needsAgent).toBe(true);
+    expect(result.signals.map((signal) => signal.id)).toContain('UNVERIFIED_BRAND_CLAIM');
   });
 
-  it('keeps a Roblox page without credentials neutral', () => {
+  it('keeps an unknown-brand lookalike without credentials at caution', () => {
     const result = engine.analyze({
       url: 'https://www.roblox.com.et/users/1413971851/profile',
       features: features({ title: 'Login to Roblox', headings: ['Login to Roblox'] }),

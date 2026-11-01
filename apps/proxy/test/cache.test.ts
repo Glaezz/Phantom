@@ -34,7 +34,7 @@ describe('KV cache', () => {
     const value = record();
     await cache.set('a'.repeat(64), value, 30);
     expect(await cache.get('a'.repeat(64))).toEqual(value);
-    expect(kv.lastPut?.key).toBe(`v1:${'a'.repeat(64)}`);
+    expect(kv.lastPut?.key).toBe(`v2:${'a'.repeat(64)}`);
     expect(kv.lastPut?.options?.expirationTtl).toBe(60);
   });
 
@@ -43,7 +43,7 @@ describe('KV cache', () => {
     const cache = createKvCache(kv as unknown as KVNamespace);
     const key = 'b'.repeat(64);
     kv.store.set(
-      `v1:${key}`,
+      `v2:${key}`,
       JSON.stringify(record({ expiresAt: Date.now() - 1 })),
     );
     expect(await cache.get(key)).toBeNull();
@@ -53,7 +53,7 @@ describe('KV cache', () => {
     const kv = new FakeKv();
     const cache = createKvCache(kv as unknown as KVNamespace);
     const key = 'c'.repeat(64);
-    kv.store.set(`v1:${key}`, '{bad');
+    kv.store.set(`v2:${key}`, '{bad');
     expect(await cache.get(key)).toBeNull();
 
     const throwing = {

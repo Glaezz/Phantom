@@ -46,6 +46,26 @@ function fieldFeature(el: Element): PageFeatures['forms'][number]['fields'][numb
   };
 }
 
+function formLabels(): string[] {
+  const labels: string[] = [];
+  const seen = new Set<string>();
+  const add = (value: string | null | undefined) => {
+    const cleaned = (value ?? '').replace(/\s+/g, ' ').trim().slice(0, 200);
+    if (!cleaned || seen.has(cleaned) || labels.length >= 30) return;
+    seen.add(cleaned);
+    labels.push(cleaned);
+  };
+
+  for (const el of document.querySelectorAll('label, legend, [role="heading"]')) {
+    add(el.textContent);
+  }
+  for (const el of document.querySelectorAll('input[aria-label], select[aria-label], textarea[aria-label]')) {
+    add(el.getAttribute('aria-label'));
+  }
+
+  return labels;
+}
+
 // CORE-02/L2 memakai PageFeatures JSON murni (ARC-02). Di sini ekstraksi dari DOM asli.
 export function extractFeatures(): PageFeatures {
   const url = location.href.slice(0, 2048);
@@ -103,7 +123,7 @@ export function extractFeatures(): PageFeatures {
     .filter((r): r is PageFeatures['externalResources'][number] => r !== null)
     .slice(0, 50);
 
-  return { url, title, headings, siteName, forms, externalResources };
+  return { url, title, headings, siteName, formLabels: formLabels(), forms, externalResources };
 }
 
 export { SENSITIVE_SELECTOR };

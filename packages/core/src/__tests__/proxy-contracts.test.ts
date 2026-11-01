@@ -38,7 +38,8 @@ describe('proxy contracts', () => {
       'https://login-xyz.my.id/',
       features({ url: 'https://login-xyz.my.id/', forms: [passwordForm()] }),
     );
-    expect(caution.status).toBe('neutral');
+    expect(caution.status).toBe('caution');
+    expect(caution.floor).toBe('neutral');
     expect(
       mergeProxyResult(caution, { final: { status: 'danger', source: 'agent', capped: false } }),
     ).toBe('danger');

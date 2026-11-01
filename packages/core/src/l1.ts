@@ -3,6 +3,7 @@ import { skeleton } from './confusables';
 import { punycodeToUnicode } from './punycode';
 import { damerauLevenshtein } from './similarity';
 import { isHostOwnedByAnyBrand, isHostOwnedByBrand, type BrandIndex } from './brands';
+import { isSharedContentPath } from './l0';
 import type { SignalHit } from './schemas';
 import type { ParsedUrl } from './url';
 
@@ -60,6 +61,30 @@ export function analyzeUrlSignals(
   if (parsed.registeredDomain && config.shortenerDomains.includes(parsed.registeredDomain)) {
     add({
       id: 'URL_SHORTENER',
+      severity: 'soft',
+      stage: 'L1',
+      detail: parsed.registeredDomain,
+    });
+  }
+
+  const sharedBrands = parsed.registeredDomain
+    ? index.byRegisteredDomain.get(parsed.registeredDomain) ?? []
+    : [];
+  const sharedBrand = sharedBrands.find((brand) => isSharedContentPath(brand, parsed));
+  if (sharedBrand) {
+    add({
+      id: 'SHARED_CONTENT_FORM',
+      severity: 'soft',
+      stage: 'L1',
+      brandId: sharedBrand.id,
+      detail: parsed.path,
+    });
+  } else if (
+    parsed.registeredDomain &&
+    config.sharedFormDomains.includes(parsed.registeredDomain)
+  ) {
+    add({
+      id: 'SHARED_CONTENT_FORM',
       severity: 'soft',
       stage: 'L1',
       detail: parsed.registeredDomain,

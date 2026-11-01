@@ -66,8 +66,18 @@ export function validateBrandDb(
       if (tld.isPrivate) {
         issues.push(`${brand.id}: official domain uses a private suffix: ${domain}`);
       }
-      if (tld.domain && config.sharedContentDomains.includes(tld.domain)) {
+      if (
+        tld.domain &&
+        config.sharedContentDomains.includes(tld.domain) &&
+        (brand.sharedContentPaths?.length ?? 0) === 0
+      ) {
         issues.push(`${brand.id}: official domain is a shared content platform: ${domain}`);
+      }
+    }
+
+    for (const path of brand.sharedContentPaths ?? []) {
+      if (!path.startsWith('/') || path.length > 200) {
+        issues.push(`${brand.id}: invalid shared content path: ${path}`);
       }
     }
 

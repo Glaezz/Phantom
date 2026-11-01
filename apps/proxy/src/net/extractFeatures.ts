@@ -20,10 +20,19 @@ function attr(element: Element, name: string, maxLength: number): string | null 
   return cleanText(value, maxLength) || null;
 }
 
+function addLabel(value: string, labels: string[], seen: Set<string>): void {
+  const cleaned = cleanText(value, 200);
+  if (!cleaned || seen.has(cleaned) || labels.length >= 30) return;
+  seen.add(cleaned);
+  labels.push(cleaned);
+}
+
 export async function extractFeatures(html: string, pageUrl: string): Promise<PageFeatures> {
   let title = '';
   let siteName: string | null = null;
   const headings: string[] = [];
+  const formLabels: string[] = [];
+  const labelSet = new Set<string>();
   const forms: FormDraft[] = [];
   const resources: PageFeatures['externalResources'] = [];
 
@@ -36,6 +45,7 @@ export async function extractFeatures(html: string, pageUrl: string): Promise<Pa
       title: '',
       headings: [],
       siteName: null,
+      formLabels: [],
       forms: [],
       externalResources: [],
     };
@@ -70,6 +80,7 @@ export async function extractFeatures(html: string, pageUrl: string): Promise<Pa
   };
 
   let currentHeading: string | null = null;
+  const labelStack: { text: string }[] = [];
 
   try {
     await new HTMLRewriter()
@@ -97,6 +108,21 @@ export async function extractFeatures(html: string, pageUrl: string): Promise<Pa
         },
         text(text) {
           if (currentHeading !== null) currentHeading += text.text;
+        },
+      })
+      .on('label, legend, [role="heading"]', {
+        element(element) {
+          const entry = { text: '' };
+          labelStack.push(entry);
+          element.onEndTag(() => {
+            const index = labelStack.lastIndexOf(entry);
+            if (index >= 0) labelStack.splice(index, 1);
+            addLabel(entry.text, formLabels, labelSet);
+          });
+        },
+        text(text) {
+          const entry = labelStack.at(-1);
+          if (entry) entry.text += text.text;
         },
       })
       .on('body', {
@@ -137,6 +163,9 @@ export async function extractFeatures(html: string, pageUrl: string): Promise<Pa
             if (forms.length < 10) forms.push(target);
           }
           if (target.fields.length >= 30) return;
+
+          const ariaLabel = attr(element, 'aria-label', 200);
+          if (ariaLabel) addLabel(ariaLabel, formLabels, labelSet);
 
           target.fields.push({
             type: cleanText(type, 64) || 'text',
@@ -180,6 +209,7 @@ export async function extractFeatures(html: string, pageUrl: string): Promise<Pa
     title: cleanText(title, 200),
     headings: headings.slice(0, 5),
     siteName,
+    formLabels: formLabels.slice(0, 30),
     forms: forms.slice(0, 10),
     externalResources: resources.slice(0, 50),
   };
@@ -192,6 +222,7 @@ export async function extractFeatures(html: string, pageUrl: string): Promise<Pa
     title: cleanText(title, 200),
     headings: [],
     siteName: null,
+    formLabels: [],
     forms: [],
     externalResources: [],
   };

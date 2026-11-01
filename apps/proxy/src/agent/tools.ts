@@ -2,6 +2,7 @@ import {
   BRANDS,
   findBrands,
   isCredentialField,
+  isCredentialText,
   parseUrl,
   resolveFormTarget,
   type AnalysisResult,
@@ -24,6 +25,7 @@ const domainArgs = z
 
 export const TOOL_SCHEMAS = {
   brand_lookup: queryArgs,
+  domain_profile: emptyArgs,
   list_forms: emptyArgs,
   get_form_target: emptyArgs,
   list_external_resources: emptyArgs,
@@ -43,8 +45,13 @@ export const TOOL_DEFS: LlmToolDef[] = [
     },
   },
   {
+    name: 'domain_profile',
+    description: 'Profil domain halaman: host, suffix, shared content, merek resmi, dan label form.',
+    parameters: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
     name: 'list_forms',
-    description: 'Ringkas form pada halaman: jumlah kolom, tipe, kredensial, host tujuan.',
+    description: 'Ringkas form pada halaman: jumlah kolom, tipe, kredensial, host tujuan, label.',
     parameters: { type: 'object', properties: {}, additionalProperties: false },
   },
   {
@@ -154,8 +161,30 @@ async function executeTool(
       return { matches };
     }
 
-    case 'list_forms': {
+    case 'domain_profile': {
+      const parsed = parseUrl(pageUrl);
+      const labels = context.features?.formLabels ?? [];
       return {
+        host: parsed.ok ? parsed.hostname : null,
+        registeredDomain: parsed.ok ? parsed.registeredDomain : null,
+        publicSuffix: parsed.ok ? parsed.publicSuffix : null,
+        isPrivateSuffix: parsed.ok ? parsed.isPrivateSuffix : false,
+        sharedContentForm: context.result.signals.some(
+          (signal) => signal.id === 'SHARED_CONTENT_FORM',
+        ),
+        officialBrandIds: parsed.ok
+          ? officialBrandIdsForDomain(parsed.registeredDomain, parsed.hostname)
+          : [],
+        credentialLabels: labels.filter(isCredentialText).slice(0, 10),
+        labels: labels.slice(0, 10),
+      };
+    }
+
+    case 'list_forms': {
+      const labels = context.features?.formLabels ?? [];
+      return {
+        labels: labels.slice(0, 10),
+        credentialLabels: labels.filter(isCredentialText).slice(0, 10),
         forms: forms.map((form, index) => {
           const target = targetFor(form, pageUrl);
           return {

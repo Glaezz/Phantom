@@ -278,6 +278,30 @@ describe('tools', () => {
     expect(tool.content.length).toBeLessThanOrEqual(TOOL_RESULT_LIMIT);
   });
 
+  it('reports domain profile and credential labels', async () => {
+    const { result } = cautionCase();
+    const features = pageFeatures({
+      url: 'https://docs.google.com/forms/d/e/abc/viewform',
+      title: 'Formulir',
+      formLabels: ['Password', 'Nama akun'],
+    });
+    const pageResult = analyze({ url: features.url, features });
+    const tool = await runTool(
+      'domain_profile',
+      {},
+      toolContext(pageResult, features),
+      new Map(),
+      new Map(),
+    );
+    expect(JSON.parse(tool.content)).toMatchObject({
+      host: 'docs.google.com',
+      registeredDomain: 'google.com',
+      sharedContentForm: true,
+      credentialLabels: ['Password'],
+    });
+    expect(result.status).toBe('caution');
+  });
+
   it('rejects domain_age without domainAge consent', async () => {
     const { result, features } = cautionCase();
     const ageDays = vi.fn(async () => 5);

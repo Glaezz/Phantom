@@ -5,20 +5,21 @@ export function normalizeUrlForCache(url: string): string {
   const parsed = parseUrl(url);
   if (!parsed.ok) return '';
 
+  const parsedUrl = new URL(parsed.href);
   const host = parsed.hostname.replace(/^www\./, '');
-  const segments = parsed.path
-    .toLowerCase()
-    .split('/')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((segment) => {
-      if (/^\d+$/.test(segment)) return '*';
-      if (/^[a-z0-9_-]{16,}$/.test(segment)) return '*';
-      return segment;
-    });
+  const rawPath = parsedUrl.pathname;
+  const path = rawPath.length > 1 && rawPath.endsWith('/') ? rawPath.slice(0, -1) : rawPath;
+  const params: [string, string][] = [];
+  parsedUrl.searchParams.forEach((value, key) => params.push([key, value]));
+  const query = params
+    .sort(([aKey, aValue], [bKey, bValue]) => {
+      const keyOrder = aKey.localeCompare(bKey);
+      return keyOrder !== 0 ? keyOrder : aValue.localeCompare(bValue);
+    })
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join('&');
 
-  const path = segments.length > 0 ? `/${segments.join('/')}` : '/';
-  return `${host}${path}`;
+  return `${host}${path || '/'}${query ? `?${query}` : ''}`;
 }
 
 export async function cacheKey(url: string): Promise<string> {

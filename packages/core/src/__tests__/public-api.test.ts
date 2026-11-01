@@ -37,7 +37,7 @@ describe('public API', () => {
     ).toBe(true);
   });
 
-  it('recognizes Meta impersonation without assets but keeps it neutral', () => {
+  it('recognizes Meta impersonation without assets as caution', () => {
     const result = analyze({
       url: 'https://secureprofiles2026-indol.vercel.app/required.html',
       features: features({ title: 'Meta | Community Standards' }),
@@ -45,7 +45,7 @@ describe('public API', () => {
     expect(result.signals).toEqual(expect.arrayContaining([
       expect.objectContaining({ id: 'BRAND_CLAIM_UNOFFICIAL_DOMAIN', brandId: 'meta' }),
     ]));
-    expect(result.status).toBe('neutral');
+    expect(result.status).toBe('caution');
     expect(engine.matchOfficial('https://www.meta.com').matched).toBe(true);
     expect(engine.matchOfficial('https://www.facebook.com').matched).toBe(true);
     expect(engine.matchOfficial('https://someone.facebook.com').matched).toBe(false);

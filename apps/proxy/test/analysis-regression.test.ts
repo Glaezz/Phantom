@@ -77,4 +77,66 @@ describe('L3/L4 pipeline regression', () => {
     expect(fixture.ageDays).not.toHaveBeenCalled();
     expect(fixture.attempt).toHaveBeenCalled();
   });
+
+  it('routes a shared Google Form credential label to L4', async () => {
+    const url =
+      'https://docs.google.com/forms/d/e/1FAIpQLSfUurZ18mOExxQmXffCi3taX4osGHHCC0RIXkQ-O214S-XWZA/viewform';
+    const features = pageFeatures({
+      url,
+      title: 'Bagi-Bagi Diamond',
+      formLabels: ['Password', 'Nama akun'],
+      forms: [],
+    });
+    const input = { url, features, consent: { cloud: true, domainAge: true } };
+    const attempt = vi.fn(async () => ({
+      text: JSON.stringify({
+        verdict: 'caution',
+        confidence: 0.7,
+        reasons: ['Formulir bersama meminta sandi.'],
+        evidenceRefs: [],
+      }),
+      toolCalls: [],
+      usage: { inputTokens: 1, outputTokens: 1 },
+    }));
+    const deps: PipelineDeps = {
+      config: parseConfig({} as Env),
+      cache: { get: vi.fn(async () => null), set: vi.fn(async () => {}) },
+      rdap: { ageDays: vi.fn(async () => 120) },
+      chain: {
+        name: 'fake',
+        entries: [{ provider: 'gemini', model: 'test' }],
+        available: () => true,
+        attempt,
+        generate: attempt,
+      },
+    };
+
+    const prepared = await prepareAnalysis(input, deps);
+    expect(prepared.result.status).toBe('caution');
+    expect(prepared.result.needsAgent).toBe(true);
+    expect(prepared.result.signals.map((signal) => signal.id)).toContain('CREDENTIAL_TEXT');
+
+    const result = await runPreparedAgent(prepared, input, deps);
+    expect(attempt).toHaveBeenCalled();
+    expect(result.agent?.used).toBe(true);
+  });
+
+  it('does not cache a neutral agent verdict', async () => {
+    const fixture = setup();
+    fixture.attempt.mockResolvedValue({
+      text: JSON.stringify({
+        verdict: 'neutral',
+        confidence: 0.6,
+        reasons: ['Tidak ada bukti penipuan.'],
+        evidenceRefs: [],
+      }),
+      toolCalls: [],
+      usage: { inputTokens: 1, outputTokens: 1 },
+    });
+
+    const result = await run(fixture);
+    expect(result.final.status).toBe('neutral');
+    expect(result.cache.written).toBe(false);
+    expect(fixture.deps.cache.set).not.toHaveBeenCalled();
+  });
 });

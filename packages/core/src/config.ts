@@ -1,5 +1,5 @@
-export const RULES_VERSION = '1.0.1';
-export const CACHE_KEY_VERSION = 'v1';
+export const RULES_VERSION = '1.1.0';
+export const CACHE_KEY_VERSION = 'v2';
 
 export const CHEAP_SUFFIXES = [
   'my.id',
@@ -28,6 +28,109 @@ export const SHORTENER_DOMAINS = [
   't.ly',
   'rb.gy',
   'bitly.com',
+  'forms.gle',
+] as const;
+
+export const SHARED_FORM_DOMAINS = ['forms.gle'] as const;
+
+// Suffixes that do not by themselves make a matching brand claim suspicious.
+export const COMMON_PUBLIC_SUFFIXES = [
+  'com',
+  'net',
+  'org',
+  'io',
+  'co',
+  'ai',
+  'app',
+  'dev',
+  'id',
+  'co.id',
+  'go.id',
+  'ac.id',
+  'or.id',
+  'web.id',
+  'my.id',
+  'sch.id',
+  'biz.id',
+  'desa.id',
+  'co.uk',
+  'org.uk',
+  'ac.uk',
+  'gov.uk',
+  'com.au',
+  'net.au',
+  'org.au',
+  'co.nz',
+  'co.jp',
+  'ne.jp',
+  'or.jp',
+  'com.sg',
+  'com.my',
+  'com.hk',
+  'com.tw',
+  'com.cn',
+  'co.in',
+  'com.br',
+  'com.mx',
+  'com.ar',
+  'com.tr',
+  'com.sa',
+  'co.za',
+  'com.ng',
+  'co.ke',
+  'com.ph',
+  'co.th',
+  'com.vn',
+  'co.kr',
+  'com.pk',
+  'com.bd',
+  'com.eg',
+  'com.ua',
+  'co.il',
+  'de',
+  'fr',
+  'nl',
+  'ru',
+  'jp',
+  'kr',
+  'cn',
+  'in',
+  'br',
+  'mx',
+  'es',
+  'it',
+  'pl',
+  'se',
+  'no',
+  'fi',
+  'dk',
+  'ch',
+  'at',
+  'be',
+  'pt',
+  'gr',
+  'cz',
+  'ro',
+  'hu',
+  'ie',
+  'nz',
+  'za',
+  'sg',
+  'my',
+  'th',
+  'vn',
+  'ph',
+  'tr',
+  'sa',
+  'ae',
+  'il',
+  'ke',
+  'ng',
+  'gh',
+  'pk',
+  'bd',
+  'lk',
+  'np',
 ] as const;
 
 export const CONTEXT_TOKENS = [
@@ -132,6 +235,8 @@ export interface Config {
   cacheKeyVersion: string;
   cheapSuffixes: readonly string[];
   shortenerDomains: readonly string[];
+  sharedFormDomains: readonly string[];
+  commonPublicSuffixes: readonly string[];
   contextTokens: readonly string[];
   leadingStopwords: readonly string[];
   trailingStopwords: readonly string[];
@@ -150,6 +255,8 @@ export const DEFAULT_CONFIG: Config = {
   cacheKeyVersion: CACHE_KEY_VERSION,
   cheapSuffixes: CHEAP_SUFFIXES,
   shortenerDomains: SHORTENER_DOMAINS,
+  sharedFormDomains: SHARED_FORM_DOMAINS,
+  commonPublicSuffixes: COMMON_PUBLIC_SUFFIXES,
   contextTokens: CONTEXT_TOKENS,
   leadingStopwords: LEADING_STOPWORDS,
   trailingStopwords: TRAILING_STOPWORDS,

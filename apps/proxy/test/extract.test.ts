@@ -53,6 +53,24 @@ describe('extractFeatures', () => {
     expect(features.forms[0].fields[0].type).toBe('password');
   });
 
+  it('extracts form labels and headings without the platform warning', async () => {
+    const features = await extractFeatures(
+      `<!doctype html><html><head><title>Bagi-Bagi Diamond</title></head><body>
+        <form action="/formResponse" method="post">
+          <div role="heading" aria-level="3"><span>Password</span></div>
+          <label>Nama <span>akun</span></label>
+          <input type="text" aria-label="Email">
+          <div class="warning">Jangan pernah mengirimkan sandi melalui Google Formulir</div>
+        </form>
+      </body></html>`,
+      'https://docs.google.com/forms/d/e/1FAIpQLSfUurZ18mOExxQmXffCi3taX4osGHHCC0RIXkQ-O214S-XWZA/viewform',
+    );
+
+    expect(features.formLabels).toEqual(expect.arrayContaining(['Password', 'Nama akun', 'Email']));
+    expect(features.formLabels?.join(' ')).not.toContain('Jangan pernah');
+    expect(PageFeaturesSchema.safeParse(features).success).toBe(true);
+  });
+
   it('does not throw on broken HTML and still validates', async () => {
     const features = await extractFeatures(
       '<title>Hi</title><form><input type=password name=pass',

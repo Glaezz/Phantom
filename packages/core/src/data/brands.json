@@ -1145,10 +1145,11 @@
   },
   {
     "id": "google_oauth",
-    "name": "Google OAuth",
+    "name": "Google",
     "category": "oauth_payment",
     "officialDomains": [
-      "google.com"
+      "google.com",
+      "google.co.id"
     ],
     "officialPhones": [],
     "keywords": [
@@ -1163,6 +1164,11 @@
     "demo": false,
     "exactHosts": [
       "accounts.google.com"
+    ],
+    "sharedContentPaths": [
+      "/forms/",
+      "/site/",
+      "/view/"
     ]
   },
   {
@@ -1308,26 +1314,6 @@
     "verifiedAt": "2026-11-01",
     "verifiedBy": "Phantom Team",
     "demo": false
-  },
-  {
-    "id": "roblox",
-    "name": "Roblox",
-    "category": "gaming",
-    "officialDomains": [
-      "roblox.com"
-    ],
-    "officialPhones": [],
-    "keywords": [
-      "roblox"
-    ],
-    "ambiguousToken": false,
-    "sources": [
-      "https://www.roblox.com/info/terms"
-    ],
-    "verifiedAt": "2026-10-31",
-    "verifiedBy": "Phantom Team",
-    "demo": false,
-    "exactHosts": []
   },
   {
     "id": "bank_nusantara_demo",

@@ -1,10 +1,10 @@
 import type { Config } from './config';
 import { AUTOCOMPLETE_TOKENS, CREDENTIAL_TOKENS, CREDENTIAL_TYPES } from './config';
 import type { BrandIndex } from './brands';
-import { isHostOwnedByBrand } from './brands';
+import { isHostOwnedByAnyBrand, isHostOwnedByBrand } from './brands';
 import type { BrandClaim } from './claims';
 import type { FieldFeature, PageFeatures, SignalHit } from './schemas';
-import { tokenizeIdentifier } from './text';
+import { tokenize, tokenizeIdentifier } from './text';
 import { parseUrl, type ParsedUrl } from './url';
 
 const CREDENTIAL_TYPE_SET = new Set<string>(CREDENTIAL_TYPES);
@@ -44,6 +44,23 @@ export function isCredentialField(field: FieldFeature): boolean {
   }
 
   return false;
+}
+
+function tokensHaveCredential(tokens: string[]): boolean {
+  for (let index = 0; index < tokens.length; index += 1) {
+    const token = tokens[index];
+    if (!token) continue;
+    if (CREDENTIAL_TOKEN_SET.has(token)) return true;
+    if (token === 'kata' && tokens[index + 1] === 'sandi') return true;
+    if (token === 'kode' && (tokens[index + 1] === 'otp' || tokens[index + 1] === 'verifikasi')) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function isCredentialText(text: string): boolean {
+  return tokensHaveCredential(tokenizeIdentifier(text));
 }
 
 export function resolveFormTarget(action: string | null, pageUrl: string): ResolvedTarget {
@@ -94,6 +111,86 @@ function trustedTarget(index: BrandIndex, target: ResolvedTarget, config: Config
   return brands.some((brand) => brand.category === 'oauth_payment');
 }
 
+const CLAIM_IGNORED_TOKENS = new Set([
+  'to',
+  'the',
+  'of',
+  'for',
+  'with',
+  'and',
+  'dan',
+  'ini',
+  'itu',
+  'page',
+  'halaman',
+  'website',
+  'web',
+  'situs',
+  'download',
+  'aplikasi',
+  'app',
+  'reset',
+  'lupa',
+  'mail',
+  'email',
+  'webmail',
+  'news',
+  'shop',
+  'store',
+  'blog',
+  'admin',
+  'dashboard',
+  'support',
+  'help',
+  'home',
+  'play',
+  'about',
+  'contact',
+  'careers',
+  'terms',
+  'privacy',
+]);
+
+function hostTokensForClaim(parsed: ParsedUrl): string[] {
+  const suffix = parsed.publicSuffix;
+  const withoutSuffix =
+    suffix && parsed.hostname.endsWith(`.${suffix}`)
+      ? parsed.hostname.slice(0, -(suffix.length + 1))
+      : parsed.hostname;
+  return withoutSuffix.split(/[-._]+/).filter(Boolean);
+}
+
+function detectUnverifiedBrandClaim(
+  features: PageFeatures,
+  parsed: ParsedUrl,
+  index: BrandIndex,
+  config: Config,
+): string | null {
+  if (!parsed.registeredDomain || !parsed.publicSuffix) return null;
+  if (parsed.isPrivateSuffix) return null;
+  if (config.commonPublicSuffixes.includes(parsed.publicSuffix)) return null;
+  if (isHostOwnedByAnyBrand(index, parsed)) return null;
+
+  const ignored = new Set<string>([
+    ...config.contextTokens,
+    ...config.leadingStopwords,
+    ...config.trailingStopwords,
+    ...CREDENTIAL_TOKENS,
+    ...CLAIM_IGNORED_TOKENS,
+  ]);
+  const hostTokens = new Set(hostTokensForClaim(parsed));
+  const texts = [features.title, ...features.headings, features.siteName ?? ''];
+
+  for (const text of texts) {
+    for (const token of tokenize(text)) {
+      if (token.length < 4 || ignored.has(token) || !hostTokens.has(token)) continue;
+      return token;
+    }
+  }
+
+  return null;
+}
+
 export interface PageSignalInput {
   parsed: ParsedUrl;
   features: PageFeatures;
@@ -117,9 +214,19 @@ export function analyzePageSignals(input: PageSignalInput): SignalHit[] {
   };
 
   const hasCredentialField = features.forms.some(hasCredential);
+  const hasSharedForm = l1Signals.some((signal) => signal.id === 'SHARED_CONTENT_FORM');
 
   if (hasCredentialField) {
     add({ id: 'CREDENTIAL_FIELD', severity: 'hard', stage: 'L2' });
+  }
+
+  const credentialText = [
+    features.title,
+    ...features.headings,
+    ...(features.formLabels ?? []),
+  ].some(isCredentialText);
+  if (credentialText && (features.forms.length > 0 || hasSharedForm)) {
+    add({ id: 'CREDENTIAL_TEXT', severity: 'soft', stage: 'L2' });
   }
 
   for (const form of features.forms) {
@@ -165,6 +272,16 @@ export function analyzePageSignals(input: PageSignalInput): SignalHit[] {
       severity: 'soft',
       stage: 'L3',
       detail: String(domainAgeDays),
+    });
+  }
+
+  const unverifiedClaim = detectUnverifiedBrandClaim(features, parsed, index, config);
+  if (unverifiedClaim) {
+    add({
+      id: 'UNVERIFIED_BRAND_CLAIM',
+      severity: 'soft',
+      stage: 'L2',
+      detail: unverifiedClaim,
     });
   }
 

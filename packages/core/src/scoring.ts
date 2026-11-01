@@ -5,6 +5,15 @@ const IMITATION_SIGNALS = [
   'HOMOGLYPH',
   'BRAND_TOKEN_IN_HOST',
   'SAME_LABEL_DIFFERENT_SUFFIX',
+  'UNVERIFIED_BRAND_CLAIM',
+] as const;
+
+const STRONG_SOFT_SIGNALS = [
+  'CHEAP_TLD',
+  'FREE_SUBDOMAIN_PLATFORM',
+  'SHARED_CONTENT_FORM',
+  'CREDENTIAL_TEXT',
+  'UNVERIFIED_BRAND_CLAIM',
 ] as const;
 
 export interface ScoreResult {
@@ -23,6 +32,8 @@ export function scoreSignals(signals: SignalHit[]): ScoreResult {
   const hasH1 = ids.has('BRAND_CLAIM_UNOFFICIAL_DOMAIN');
   const hasH2 = ids.has('CREDENTIAL_FIELD');
   const hasH3 = ids.has('FORM_CROSS_DOMAIN');
+  const hasCredentialText = ids.has('CREDENTIAL_TEXT');
+  const hasStrongSoft = STRONG_SOFT_SIGNALS.some((id) => ids.has(id));
   const hasImitation = IMITATION_SIGNALS.some((id) => ids.has(id));
   const hasC4 = hasH1 && ids.has('FREE_SUBDOMAIN_PLATFORM') && ids.has('HOTLINKS_OFFICIAL_ASSETS');
 
@@ -38,26 +49,22 @@ export function scoreSignals(signals: SignalHit[]): ScoreResult {
       message: 'Bukti keras H1 dan H2 menghasilkan status Bahaya.',
       data: { rule: 'danger', h1: hasH1, h2: hasH2 },
     });
-  } else if (hasH2 && hasH3) {
+  } else if (hasH2 && (hasH3 || hasStrongSoft || softIds.size >= 2)) {
     status = 'caution';
     trace.push({
       stage: 'SCORE',
-      message: 'Kolom kredensial dan form lintas domain menghasilkan status Hati-hati.',
-      data: { rule: 'C1', softSignals: softIds.size },
+      message: 'Kolom kredensial disertai sinyal risiko tambahan menghasilkan status Hati-hati.',
+      data: {
+        rule: hasH3 ? 'C1' : hasStrongSoft ? 'C2-strong' : 'C2',
+        softSignals: softIds.size,
+      },
     });
-  } else if (hasH2 && softIds.size >= 2) {
+  } else if (hasCredentialText) {
     status = 'caution';
     trace.push({
       stage: 'SCORE',
-      message: 'Kolom kredensial disertai dua sinyal lunak menghasilkan status Hati-hati.',
-      data: { rule: 'C2', softSignals: softIds.size },
-    });
-  } else if (hasImitation) {
-    status = 'caution';
-    trace.push({
-      stage: 'SCORE',
-      message: 'Kemiripan alamat dengan merek resmi menghasilkan status Hati-hati.',
-      data: { rule: 'C3', softSignals: softIds.size },
+      message: 'Label form meminta data kredensial menghasilkan status Hati-hati.',
+      data: { rule: 'C6', softSignals: softIds.size },
     });
   } else if (hasC4) {
     status = 'caution';
@@ -65,6 +72,20 @@ export function scoreSignals(signals: SignalHit[]): ScoreResult {
       stage: 'SCORE',
       message: 'Klaim merek pada hosting gratis disertai aset resmi menghasilkan status Hati-hati.',
       data: { rule: 'C4', softSignals: softIds.size },
+    });
+  } else if (hasH1) {
+    status = 'caution';
+    trace.push({
+      stage: 'SCORE',
+      message: 'Klaim merek pada domain tidak resmi menghasilkan status Hati-hati.',
+      data: { rule: 'C5', softSignals: softIds.size },
+    });
+  } else if (hasImitation) {
+    status = 'caution';
+    trace.push({
+      stage: 'SCORE',
+      message: 'Kemiripan alamat dengan merek resmi menghasilkan status Hati-hati.',
+      data: { rule: 'C3', softSignals: softIds.size },
     });
   } else {
     trace.push({
@@ -74,7 +95,7 @@ export function scoreSignals(signals: SignalHit[]): ScoreResult {
     });
   }
 
-  const needsAgent = status === 'caution' && (hasH2 || hasC4);
+  const needsAgent = status === 'caution' && (hasH2 || hasCredentialText || hasC4);
 
   return { status, floor, needsAgent, trace };
 }

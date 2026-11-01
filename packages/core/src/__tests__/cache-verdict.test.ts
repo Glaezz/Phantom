@@ -4,19 +4,25 @@ import { mergeVerdict } from '../verdict';
 import type { AgentVerdict, AnalysisResult } from '../schemas';
 
 describe('cache key normalization', () => {
-  it('lowercases, strips query/fragment, and keeps two path segments', () => {
+  it('lowercases the host, preserves path case, and keeps the full path and query', () => {
     expect(normalizeUrlForCache('https://Bank-X.my.id/Login/verify/abc?token=1#x')).toBe(
-      'bank-x.my.id/login/verify',
+      'bank-x.my.id/Login/verify/abc?token=1',
     );
   });
 
-  it('keeps only the first two segments and strips www', () => {
-    expect(normalizeUrlForCache('https://www.example.com/a/b/c/d')).toBe('example.com/a/b');
+  it('keeps every path segment and strips www', () => {
+    expect(normalizeUrlForCache('https://www.example.com/a/b/c/d')).toBe('example.com/a/b/c/d');
   });
 
-  it('masks long opaque segments', () => {
+  it('keeps long opaque segments instead of masking them', () => {
     expect(normalizeUrlForCache('https://example.com/reset/1234567890abcdef1234')).toBe(
-      'example.com/reset/*',
+      'example.com/reset/1234567890abcdef1234',
+    );
+  });
+
+  it('sorts query parameters without dropping them', () => {
+    expect(normalizeUrlForCache('https://example.com/a?b=2&a=1')).toBe(
+      'example.com/a?a=1&b=2',
     );
   });
 
@@ -31,11 +37,17 @@ describe('cache key normalization', () => {
 });
 
 describe('cacheKey', () => {
-  it('hashes normalized URLs to lowercase hex', async () => {
+  it('hashes normalized URLs to lowercase hex and keeps query differences', async () => {
     const a = await cacheKey('https://example.com/a?x=1');
     const b = await cacheKey('https://example.com/a?x=2');
-    expect(a).toBe(b);
+    expect(a).not.toBe(b);
     expect(a).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  it('treats reordered query parameters as the same key', async () => {
+    const a = await cacheKey('https://example.com/a?b=2&a=1');
+    const b = await cacheKey('https://example.com/a?a=1&b=2');
+    expect(a).toBe(b);
   });
 
   it('rejects invalid URLs', async () => {

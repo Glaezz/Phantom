@@ -12,11 +12,13 @@ const IMITATION_ORDER = [
   'HOMOGLYPH',
   'BRAND_TOKEN_IN_HOST',
   'SAME_LABEL_DIFFERENT_SUFFIX',
+  'UNVERIFIED_BRAND_CLAIM',
 ] as const;
 
 const SOFT_ORDER = [
   'CHEAP_TLD',
   'FREE_SUBDOMAIN_PLATFORM',
+  'SHARED_CONTENT_FORM',
   'URL_SHORTENER',
   'IP_HOST',
   'USERINFO_IN_URL',
@@ -34,7 +36,12 @@ function reasonFor(signal: SignalHit, input: ReasonInput, brandName: (id: string
     case 'BRAND_CLAIM_UNOFFICIAL_DOMAIN':
       return `Laman ini mengaku sebagai ${brand}, tetapi alamatnya (${domain}) bukan alamat resmi ${brand}.`;
     case 'CREDENTIAL_FIELD':
+    case 'CREDENTIAL_TEXT':
       return 'Laman ini meminta sandi, PIN, atau kode OTP.';
+    case 'SHARED_CONTENT_FORM':
+      return 'Laman ini memakai formulir atau konten dari platform bersama, bukan halaman resmi merek.';
+    case 'UNVERIFIED_BRAND_CLAIM':
+      return `Laman ini mengaku sebagai ${signal.detail ?? 'merek tertentu'}, tetapi alamatnya tidak membuktikan kepemilikan merek itu.`;
     case 'FORM_CROSS_DOMAIN':
       return `Data yang Anda isi akan dikirim ke situs lain (${signal.detail ?? 'tidak dikenal'}).`;
     case 'TYPOSQUAT':
@@ -94,8 +101,8 @@ export function buildReasons(input: ReasonInput, brands: Brand[] = []): string[]
   for (const signal of byId('FORM_CROSS_DOMAIN')) {
     push(reasonFor(signal, input, brandName));
   }
-  for (const signal of byId('CREDENTIAL_FIELD')) {
-    push(reasonFor(signal, input, brandName));
+  for (const id of ['CREDENTIAL_FIELD', 'CREDENTIAL_TEXT']) {
+    for (const signal of byId(id)) push(reasonFor(signal, input, brandName));
   }
   for (const id of IMITATION_ORDER) {
     for (const signal of byId(id)) push(reasonFor(signal, input, brandName));
