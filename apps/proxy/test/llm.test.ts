@@ -9,7 +9,7 @@ import { isHealthy, resetHealth } from '../src/llm/health';
 const ENTRIES = [
   { provider: 'gemini' as const, model: 'gemini-3.5-flash-lite' },
   { provider: 'gemini' as const, model: 'gemini-3.1-flash-lite' },
-  { provider: 'groq' as const, model: 'qwen/qwen3.6-27b' },
+  { provider: 'groq' as const, model: 'qwen/qwen3.8-27b' },
 ];
 
 const request: LlmRequest = {
@@ -163,7 +163,7 @@ describe('Gemini adapter', () => {
       }),
     );
 
-    const provider = createGeminiProvider('gemini-3.5-flash-lite', 'secret');
+    const provider = createGeminiProvider('gemini-3.1-flash-lite', 'secret');
     await provider.generate(request, { signal: new AbortController().signal });
 
     expect((body.toolConfig as { functionCallingConfig: { mode: string } }).functionCallingConfig.mode).toBe(
@@ -192,7 +192,7 @@ describe('Gemini adapter', () => {
       }),
     );
 
-    const provider = createGeminiProvider('gemini-3.5-flash-lite', 'secret');
+    const provider = createGeminiProvider('gemini-3.1-flash-lite', 'secret');
     const first = await provider.generate(request, { signal: new AbortController().signal });
     await provider.generate(
       {
@@ -226,10 +226,56 @@ describe('Gemini adapter', () => {
           : geminiResponse([{ functionCall: { id: 'a', name: 'lookup', args: {} } }]);
       }),
     );
-    const provider = createGeminiProvider('gemini-3.5-flash-lite', 'secret');
+    const provider = createGeminiProvider('gemini-3.1-flash-lite', 'secret');
     await provider.generate(request, { signal: new AbortController().signal });
     expect((bodies[0].generationConfig as Record<string, unknown>).thinkingConfig).toBeDefined();
     expect((bodies[1].generationConfig as Record<string, unknown>).thinkingConfig).toBeUndefined();
+  });
+
+  it('strips JSON Schema keywords Gemini rejects', async () => {
+    let body: Record<string, unknown> = {};
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
+        body = JSON.parse(String(init?.body));
+        return geminiResponse([{ functionCall: { id: 'a', name: 'lookup', args: {} } }]);
+      }),
+    );
+
+    const provider = createGeminiProvider('gemini-3.1-flash-lite', 'secret');
+    await provider.generate(
+      {
+        ...request,
+        tools: [
+          {
+            name: 'submit',
+            description: 'submit',
+            parameters: {
+              type: 'object',
+              properties: {
+                verdict: { type: 'string', enum: ['neutral', 'caution', 'danger'] },
+                reasons: { type: 'array', items: { type: 'string' }, maxItems: 3 },
+              },
+              required: ['verdict'],
+              additionalProperties: false,
+            },
+          },
+        ],
+      },
+      { signal: new AbortController().signal },
+    );
+
+    const declarations = (body.tools as { functionDeclarations: { parameters: unknown }[] }[])[0]
+      .functionDeclarations;
+    expect(JSON.stringify(declarations)).not.toContain('additionalProperties');
+    expect(declarations[0].parameters).toEqual({
+      type: 'object',
+      properties: {
+        verdict: { type: 'string', enum: ['neutral', 'caution', 'danger'] },
+        reasons: { type: 'array', items: { type: 'string' }, maxItems: 3 },
+      },
+      required: ['verdict'],
+    });
   });
 });
 
@@ -244,7 +290,7 @@ describe('Groq adapter', () => {
       }),
     );
 
-    const provider = createGroqProvider('qwen/qwen3.6-27b', 'groq-key');
+    const provider = createGroqProvider('qwen/qwen3.8-27b', 'groq-key');
     const first = await provider.generate(request, { signal: new AbortController().signal });
     expect(bodies[0].tool_choice).toBe('required');
     expect(bodies[0].temperature).toBe(0.9);
@@ -275,7 +321,7 @@ describe('Groq adapter', () => {
         return groqResponse();
       }),
     );
-    const provider = createGroqProvider('qwen/qwen3.6-27b', 'key');
+    const provider = createGroqProvider('qwen/qwen3.8-27b', 'key');
     const result = await provider.generate(
       { ...request, temperature: undefined },
       { signal: new AbortController().signal },
@@ -291,7 +337,7 @@ describe('health markers', () => {
   });
 
   it('is typed as a LlmResponse compatible provider', () => {
-    const provider = createGroqProvider('qwen/qwen3.6-27b', 'key');
+    const provider = createGroqProvider('qwen/qwen3.8-27b', 'key');
     const response: LlmResponse = {
       toolCalls: [],
       text: null,

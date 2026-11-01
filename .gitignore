@@ -4,6 +4,7 @@ dist
 .vite
 .env
 .env.local
+.dev.vars
 *.zip
 .output
 .wxt

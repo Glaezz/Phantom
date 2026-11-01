@@ -71,6 +71,7 @@ export const copy = {
     rdapUnavailable: 'Umur situs tidak bisa dicek saat ini.',
     llmUnavailable: 'Pemeriksaan AI tidak tersedia saat ini.',
     agentTimeout: 'Pemeriksaan AI melewati batas waktu.',
+    agentNoVerdict: 'Pemeriksaan AI belum menghasilkan kesimpulan.',
   },
   floor: {
     title: 'Batas bawah vonis: {status}',

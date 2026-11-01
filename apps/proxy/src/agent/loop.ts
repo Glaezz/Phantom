@@ -130,10 +130,21 @@ export async function runAgent(chain: LlmChain, input: AgentInput): Promise<Agen
       let steps = 0;
       let entryFailed = false;
       let textParseTried = false;
+      let nudgeSent = false;
 
       while (steps < input.maxSteps) {
         if (timeout.signal.aborted) return failure('agent_timeout');
         if (totalCalls >= MAX_TOTAL_LLM_CALLS) return failure('no_verdict');
+
+        // Langkah terakhir dipakai untuk memaksa vonis, bukan menambah alat lagi.
+        if (!nudgeSent && steps === input.maxSteps - 1) {
+          nudgeSent = true;
+          conversation.push({
+            role: 'user',
+            content:
+              'Langkah terakhir. Jangan memanggil alat lain lagi; panggil submit_verdict sekarang dengan bukti yang sudah Anda kumpulkan.',
+          });
+        }
 
         let response: LlmResponse;
         try {

@@ -8,7 +8,7 @@ describe('parseConfig', () => {
     expect(config.llmChain).toEqual([
       { provider: 'gemini', model: 'gemini-3.5-flash-lite' },
       { provider: 'gemini', model: 'gemini-3.1-flash-lite' },
-      { provider: 'groq', model: 'qwen/qwen3.6-27b' },
+      { provider: 'groq', model: 'qwen/qwen3.8-27b' },
     ]);
     expect(config.agentMaxSteps).toBe(4);
     expect(config.cacheTtlDangerDays).toBe(14);

@@ -240,7 +240,9 @@ function agentFailureDegraded(run: AgentRunResult): string[] {
   if (run.ok) return [];
   if (run.reason === 'agent_timeout') return ['agent_timeout'];
   if (run.reason === 'llm_unavailable') return ['llm_unavailable'];
-  return [];
+  // `no_verdict`: model menjawab tetapi tidak menyelesaikan vonis. Tanpa penanda
+  // ini panel akan salah menyebut langkah AI "tidak diperlukan".
+  return ['no_verdict'];
 }
 
 /** Domains the agent actually probed through `domain_age`, deduplicated. */

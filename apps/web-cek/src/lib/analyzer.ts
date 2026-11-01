@@ -589,6 +589,8 @@ function buildTrace(selected: ItemOutcome | undefined, hasApk: boolean): TraceSt
     trace.push(skippedStage('L4', 'llmUnavailable'));
   } else if (selected.degraded.includes('agent_timeout')) {
     trace.push(skippedStage('L4', 'agentTimeout'));
+  } else if (selected.degraded.includes('no_verdict')) {
+    trace.push(skippedStage('L4', 'agentNoVerdict'));
   } else if (!selected.contentChecked) {
     trace.push(skippedStage('L4', 'skippedContent'));
   } else if (!selected.result.needsAgent) {
@@ -701,7 +703,7 @@ export async function analyze(input: string): Promise<Verdict> {
     !agentUsed &&
     !cacheHit &&
     selected.degraded.some((reason) =>
-      ['llm_unavailable', 'agent_timeout', 'rdap_unavailable', 'proxy_unavailable'].includes(
+      ['llm_unavailable', 'agent_timeout', 'no_verdict', 'rdap_unavailable', 'proxy_unavailable'].includes(
         reason,
       ),
     )
