@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Copy as CopyIcon } from 'lucide-react';
 import { copy } from '../copy.id';
 import { Button } from './Button';
@@ -11,7 +11,13 @@ export interface InstallStepperProps {
 
 // Diagram ilustrasi garis tunggal per langkah (Design.md 6.12, DS-64)
 function StepDiagram({ stepIndex, browser }: { stepIndex: number; browser: 'chrome' | 'edge' }) {
-  const altText = copy.download.stepAlts[stepIndex] || `Langkah ${stepIndex + 1}`;
+  const altText =
+    (browser === 'chrome'
+      ? copy.download.stepAltsChrome[stepIndex]
+      : copy.download.stepAltsEdge[stepIndex]) ||
+    copy.download.stepAlts[stepIndex] ||
+    `Langkah ${stepIndex + 1}`;
+
   const addressUrl = browser === 'chrome' ? copy.download.chromeAddress : copy.download.edgeAddress;
 
   switch (stepIndex) {
@@ -79,6 +85,48 @@ function StepDiagram({ stepIndex, browser }: { stepIndex: number; browser: 'chro
       );
     case 3:
       // Langkah 4: Aktifkan Mode pengembang
+      // Chrome: sorotan kanan atas. Edge: sorotan panel navigasi kiri.
+      if (browser === 'chrome') {
+        return (
+          <svg
+            role="img"
+            aria-label={altText}
+            className="ph-stepper__diagram"
+            viewBox="0 0 280 120"
+            fill="none"
+            stroke="currentColor"
+          >
+            {/* Jendela peramban Chrome */}
+            <rect x="20" y="20" width="240" height="80" rx="6" strokeWidth="2" stroke="var(--ink-300)" />
+            {/* Header Chrome */}
+            <line x1="20" y1="50" x2="260" y2="50" strokeWidth="1.5" stroke="var(--ink-200)" />
+            <text x="35" y="38" fill="var(--ink-800)" fontSize="11" fontWeight="700" fontFamily="var(--font-ui)">
+              Ekstensi
+            </text>
+            {/* Mode pengembang dan sakelar di kanan atas dengan sorotan */}
+            <rect
+              x="138"
+              y="26"
+              width="114"
+              height="20"
+              rx="4"
+              strokeWidth="2"
+              stroke="var(--focus)"
+              strokeDasharray="3 3"
+            />
+            <text x="144" y="40" fill="var(--ink-800)" fontSize="9" fontWeight="600" fontFamily="var(--font-ui)">
+              Mode pengembang
+            </text>
+            <rect x="234" y="31" width="14" height="10" rx="5" fill="var(--official-strong)" />
+            <circle cx="243" cy="36" r="3.5" fill="var(--surface)" />
+            {/* Area kartu ekstensi di bawah */}
+            <rect x="35" y="60" width="98" height="28" rx="4" strokeWidth="1" stroke="var(--ink-300)" strokeDasharray="2 2" />
+            <rect x="147" y="60" width="98" height="28" rx="4" strokeWidth="1" stroke="var(--ink-300)" strokeDasharray="2 2" />
+          </svg>
+        );
+      }
+
+      // Edge: sorotan panel navigasi kiri
       return (
         <svg
           role="img"
@@ -88,14 +136,32 @@ function StepDiagram({ stepIndex, browser }: { stepIndex: number; browser: 'chro
           fill="none"
           stroke="currentColor"
         >
-          <rect x="20" y="25" width="240" height="70" rx="6" strokeWidth="2" stroke="var(--ink-300)" />
-          <text x="35" y="62" fill="var(--ink-800)" fontSize="12" fontWeight="600" fontFamily="var(--font-ui)">
+          {/* Jendela peramban Edge */}
+          <rect x="20" y="20" width="240" height="80" rx="6" strokeWidth="2" stroke="var(--ink-300)" />
+          {/* Garis batas panel kiri */}
+          <line x1="110" y1="20" x2="110" y2="100" strokeWidth="1.5" stroke="var(--ink-200)" />
+          {/* Menu panel kiri */}
+          <rect x="28" y="30" width="68" height="6" rx="2" fill="var(--ink-200)" />
+          <rect x="28" y="40" width="54" height="6" rx="2" fill="var(--ink-200)" />
+          {/* Mode pengembang di panel kiri dengan sorotan */}
+          <rect
+            x="25"
+            y="54"
+            width="80"
+            height="38"
+            rx="4"
+            strokeWidth="2"
+            stroke="var(--focus)"
+            strokeDasharray="3 3"
+          />
+          <text x="29" y="67" fill="var(--ink-800)" fontSize="9" fontWeight="600" fontFamily="var(--font-ui)">
             Mode pengembang
           </text>
-          {/* Sakelar toggle aktif bergaris sorotan */}
-          <rect x="180" y="40" width="60" height="40" rx="6" strokeWidth="2" stroke="var(--focus)" strokeDasharray="3 3" />
-          <rect x="190" y="48" width="40" height="22" rx="11" fill="var(--official-strong)" />
-          <circle cx="219" cy="59" r="8" fill="var(--surface)" />
+          <rect x="29" y="74" width="20" height="10" rx="5" fill="var(--official-strong)" />
+          <circle cx="44" cy="79" r="3.5" fill="var(--surface)" />
+          {/* Area konten utama sebelah kanan */}
+          <rect x="122" y="30" width="126" height="20" rx="4" strokeWidth="1" stroke="var(--ink-300)" />
+          <rect x="122" y="58" width="126" height="30" rx="4" strokeWidth="1" stroke="var(--ink-300)" strokeDasharray="2 2" />
         </svg>
       );
     case 4:
@@ -151,10 +217,23 @@ export function InstallStepper({
   const [browser, setBrowser] = useState<'chrome' | 'edge'>(initialBrowser);
   const [copiedAddress, setCopiedAddress] = useState(false);
 
+  const chromeTabRef = useRef<HTMLButtonElement>(null);
+  const edgeTabRef = useRef<HTMLButtonElement>(null);
+
   const addressToCopy =
     browser === 'chrome'
       ? copy.download.chromeAddress
       : copy.download.edgeAddress;
+
+  const stepsList =
+    browser === 'chrome'
+      ? copy.download.stepsChrome
+      : copy.download.stepsEdge;
+
+  const panelTitle =
+    browser === 'chrome'
+      ? copy.download.panelTitleChrome
+      : copy.download.panelTitleEdge;
 
   const handleCopyAddress = async () => {
     try {
@@ -174,86 +253,123 @@ export function InstallStepper({
     setBrowser(b);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const nextBrowser: 'chrome' | 'edge' = browser === 'chrome' ? 'edge' : 'chrome';
+      setBrowser(nextBrowser);
+      if (nextBrowser === 'chrome') {
+        chromeTabRef.current?.focus({ preventScroll: true });
+      } else {
+        edgeTabRef.current?.focus({ preventScroll: true });
+      }
+    }
+  };
+
   return (
     <div className="ph-stepper">
-      {/* Pengalih Peramban: Chrome atau Edge */}
+      {/* Pengalih Peramban: Chrome atau Edge (WAI-ARIA tablist) */}
       <div className="ph-stepper__browser-toggle" role="tablist" aria-label="Pilih peramban">
         <button
+          ref={chromeTabRef}
           type="button"
           role="tab"
+          id="tab-chrome"
           aria-selected={browser === 'chrome'}
+          aria-controls="panel-install-steps"
+          tabIndex={browser === 'chrome' ? 0 : -1}
           className={`ph-stepper__browser-tab ${browser === 'chrome' ? 'ph-stepper__browser-tab--active' : ''}`}
           onClick={() => handleSelectBrowser('chrome')}
+          onKeyDown={handleKeyDown}
         >
           {copy.download.browserChrome}
         </button>
         <button
+          ref={edgeTabRef}
           type="button"
           role="tab"
+          id="tab-edge"
           aria-selected={browser === 'edge'}
+          aria-controls="panel-install-steps"
+          tabIndex={browser === 'edge' ? 0 : -1}
           className={`ph-stepper__browser-tab ${browser === 'edge' ? 'ph-stepper__browser-tab--active' : ''}`}
           onClick={() => handleSelectBrowser('edge')}
+          onKeyDown={handleKeyDown}
         >
           {copy.download.browserEdge}
         </button>
       </div>
 
-      {/* Enam Langkah Pemasangan */}
-      <ol className="ph-stepper__list">
-        {copy.download.steps.map((stepText, idx) => {
-          const isAddressStep = idx === 2;
+      {/* Panel Langkah Pemasangan Sesuai Peramban (WAI-ARIA tabpanel) */}
+      <div
+        role="tabpanel"
+        id="panel-install-steps"
+        aria-labelledby={browser === 'chrome' ? 'tab-chrome' : 'tab-edge'}
+        className="ph-stepper__panel"
+      >
+        <h3 className="ph-stepper__panel-title">{panelTitle}</h3>
 
-          return (
-            <li
-              key={idx}
-              className="ph-stepper__item"
-              onClick={() => onStepChange?.(idx + 1)}
-            >
-              <div className="ph-stepper__item-body">
-                {/* Nomor di atas titik persegi (Design.md 6.12) */}
-                <div className="ph-stepper__marker-wrap">
-                  <span className="ph-stepper__num">{idx + 1}</span>
-                  <span className="ph-stepper__dot" aria-hidden="true" />
-                </div>
+        {/* Enam Langkah Pemasangan */}
+        <ol className="ph-stepper__list">
+          {stepsList.map((stepText, idx) => {
+            const isAddressStep = idx === 2;
 
-                <div className="ph-stepper__info">
-                  {/* Satu kalimat instruksi */}
-                  <p className="ph-stepper__instruction">{stepText}</p>
-
-                  {/* Tombol Salin alamat untuk langkah 3 */}
-                  {isAddressStep && (
-                    <div className="ph-stepper__address-box">
-                      <code className="ph-stepper__address-text">
-                        {addressToCopy}
-                      </code>
-                      <Button
-                        variant="secondary"
-                        onClick={handleCopyAddress}
-                        className="ph-stepper__btn-copy"
-                      >
-                        <CopyIcon size={16} aria-hidden="true" />
-                        <span>
-                          {copiedAddress
-                            ? copy.download.stepAddressCopied
-                            : copy.download.stepAddress}
-                        </span>
-                      </Button>
-                      <span className="ph-sr-only" aria-live="polite">
-                        {copiedAddress ? copy.download.stepAddressCopied : ''}
-                      </span>
+            return (
+              <li
+                key={idx}
+                className="ph-stepper__item"
+                onClick={() => onStepChange?.(idx + 1)}
+              >
+                <div className="ph-stepper__item-body">
+                  <div className="ph-stepper__text-col">
+                    {/* Nomor di atas titik persegi (Design.md 6.12) */}
+                    <div className="ph-stepper__marker-wrap">
+                      <span className="ph-stepper__num">{idx + 1}</span>
+                      <span className="ph-stepper__dot" aria-hidden="true" />
                     </div>
-                  )}
+
+                    <div className="ph-stepper__text-content">
+                      {/* Satu kalimat instruksi */}
+                      <p className="ph-stepper__instruction">{stepText}</p>
+
+                      {/* Tombol Salin alamat untuk langkah 3 */}
+                      {isAddressStep && (
+                        <div className="ph-stepper__address-box">
+                          <code className="ph-stepper__address-text">
+                            {addressToCopy}
+                          </code>
+                          <Button
+                            variant="secondary"
+                            onClick={handleCopyAddress}
+                            className="ph-stepper__btn-copy"
+                          >
+                            <CopyIcon size={16} aria-hidden="true" />
+                            <span>
+                              {copiedAddress
+                                ? copy.download.stepAddressCopied
+                                : copy.download.stepAddress}
+                            </span>
+                          </Button>
+                          <span className="ph-sr-only" aria-live="polite">
+                            {copiedAddress ? copy.download.stepAddressCopied : ''}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
                   {/* Tangkapan layar / skema ber-alt dengan sorotan elemen klik */}
-                  <div className="ph-stepper__diagram-wrap">
-                    <StepDiagram stepIndex={idx} browser={browser} />
+                  <div className="ph-stepper__diagram-col">
+                    <div className="ph-stepper__diagram-wrap">
+                      <StepDiagram stepIndex={idx} browser={browser} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </li>
-          );
-        })}
-      </ol>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
     </div>
   );
 }

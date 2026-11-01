@@ -26,6 +26,8 @@ export interface ParsedItem {
   status: Status;
   finding: string;
   isApk?: boolean;
+  /** Hanya satu tautan per pesan yang diperiksa penuh. */
+  checked?: boolean;
 }
 
 export interface Verdict {
@@ -36,7 +38,17 @@ export interface Verdict {
   source: Source;
   claimedBrand?: ClaimedBrand;
   suspiciousHost?: string;
-  notices?: Array<'rulesOnly' | 'spaLimit' | 'budgetLimited'>;
+  notices?: Array<
+    | 'rulesOnly'
+    | 'spaLimit'
+    | 'budgetLimited'
+    | 'contentUnchecked'
+    | 'deepUnavailable'
+    | 'otherLinksUnchecked'
+  >;
   parsedItems?: ParsedItem[];
   rawText?: string;
+  /** L4 benar-benar dipakai (agen berjalan atau hasil cache). */
+  agentUsed?: boolean;
+  cacheHit?: boolean;
 }

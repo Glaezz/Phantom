@@ -4,6 +4,12 @@
    di dalam bagian --s-8. Skala: display > h1 > h2 > body > caption.
    ================================================================ */
 
+.ph-landing {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 /* --- Seksi: ritme jarak antar bagian --- */
 .ph-section {
   padding-block: var(--s-12);

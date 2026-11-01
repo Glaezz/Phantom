@@ -52,7 +52,25 @@ export const copy = {
     L3: 'Umur situs',
     L4: 'Investigasi AI',
     skippedNoConsent: 'Dilewati, izin pemeriksaan lanjutan belum diberikan.',
+    skippedContent: 'Isi laman tidak bisa diambil, jadi langkah ini dilewati.',
+    skippedOfficial: 'Dilewati, alamat sudah cocok dengan kanal resmi.',
     injectionIgnored: 'Laman ini berisi tulisan yang mencoba memengaruhi penilaian AI. Diabaikan.',
+    l0Match: 'Alamat cocok dengan daftar kanal resmi terverifikasi.',
+    l0NoMatch: 'Alamat tidak cocok dengan daftar kanal resmi.',
+    l1Found: 'Ditemukan ciri pada alamat situs yang perlu diperiksa.',
+    l1None: 'Tidak ditemukan ciri mencurigakan pada alamat situs.',
+    l2Found: 'Ditemukan ciri pada isi laman yang perlu diperiksa.',
+    l2None: 'Tidak ditemukan ciri mencurigakan pada isi laman.',
+    l3Found: 'Umur situs ini masih baru dan perlu diperiksa.',
+    l3None: 'Umur situs tidak menunjukkan tanda bahaya.',
+    l4Found: 'Pemeriksaan AI menemukan ciri yang perlu diperiksa.',
+    l4None: 'Pemeriksaan AI tidak menemukan tanda bahaya tambahan.',
+    l4Cache: 'Memakai hasil pemeriksaan AI sebelumnya.',
+    skippedNotNeeded: 'Dilewati, langkah ini tidak diperlukan untuk alamat ini.',
+    skippedCache: 'Dilewati, memakai hasil pemeriksaan sebelumnya.',
+    rdapUnavailable: 'Umur situs tidak bisa dicek saat ini.',
+    llmUnavailable: 'Pemeriksaan AI tidak tersedia saat ini.',
+    agentTimeout: 'Pemeriksaan AI melewati batas waktu.',
   },
   floor: {
     title: 'Batas bawah vonis: {status}',
@@ -60,6 +78,8 @@ export const copy = {
   },
   mode: {
     rulesOnly: 'Pemeriksaan cepat (tanpa AI)',
+    deep: 'Pemeriksaan lanjutan (L0–L4)',
+    cache: 'Hasil pemeriksaan sebelumnya',
     noConsent: 'Pemeriksaan lanjutan belum diaktifkan. Hasil memakai pemeriksaan dasar.',
   },
   consent: {
@@ -81,11 +101,19 @@ export const copy = {
   web: {
     headline: 'Dapat tautan atau pesan yang mencurigakan? Cek dulu sebelum diklik',
     label: 'Tempel tautan atau seluruh pesan WhatsApp/SMS di sini',
+    placeholder: 'mis. https://promo-hadiah-murah.example/login',
     paste: 'Tempel dari Papan Klip',
     pasteHelp: 'Tekan lama di kolom, lalu pilih Tempel.',
     check: 'Periksa Sekarang',
     checking: 'Memeriksa…',
     steps: ['Mengecek alamat situs', 'Mengecek isi laman', 'Menanyakan ke AI (bila perlu)'],
+    stepsActive: [
+      'Mengecek alamat situs',
+      'Mengecek isi laman',
+      'Menanyakan ke AI (bila perlu)',
+    ],
+    consentNotice:
+      'Dengan menekan Periksa Sekarang, Anda setuju alamat situs dan struktur halaman dikirim ke layanan AI dan pemeriksa umur domain. Isi yang Anda ketik tidak pernah dikirim.',
     slow: 'Sedikit lebih lama dari biasanya…',
     copyResult: 'Salin hasil',
     copied: 'Tersalin ✓',
@@ -112,7 +140,18 @@ export const copy = {
       'Untuk laman yang dibangun dengan JavaScript penuh, hasil paling lengkap diperoleh lewat ekstensi Phantom di komputer.',
     budgetLimited:
       'Pemeriksaan AI sedang dibatasi hari ini. Anda tetap mendapat hasil pemeriksaan dasar.',
+    contentUnchecked:
+      'Isi sebagian laman belum bisa diperiksa. Hasil ini hanya memakai alamat situs.',
+    deepUnavailable:
+      'Pemeriksaan lanjutan belum berhasil. Hasil ini memakai pemeriksaan dasar.',
+    otherLinksUnchecked:
+      'Pesan ini memuat tautan lain yang belum diperiksa. Periksa satu per satu bila perlu.',
+    reasonNeutral: 'Belum ditemukan tanda bahaya pada alamat situs ini.',
+    reasonOfficial: 'Alamat ini terdaftar sebagai kanal resmi.',
+    reasonApkMessage: 'Pesan ini memuat berkas aplikasi (.apk) yang tidak resmi.',
     empty: 'Tempel dulu tautan atau pesan yang ingin diperiksa.',
+    noUrlFound:
+      'Tidak ada tautan yang bisa diperiksa di pesan ini. Tempel tautan yang diawali "http".',
     invalidUrl: 'Ini belum terlihat seperti tautan. Coba tempel seluruh tautan, mulai dari "http".',
     blockedTarget: 'Alamat ini tidak bisa diperiksa dari Web Cek karena alasan keamanan.',
     offline: 'Anda sedang offline. Sambungkan internet lalu coba lagi.',
@@ -127,12 +166,21 @@ export const copy = {
     found: 'Ditemukan {links} tautan dan {phones} nomor telepon',
     apkWarning: 'Jangan pasang file ini. Undangan sungguhan tidak perlu aplikasi tambahan.',
     phoneUnknown: 'Tidak ada di daftar kanal resmi',
+    findingOfficial: 'Terdaftar sebagai kanal resmi',
+    findingNeutral: 'Belum ditemukan tanda bahaya',
+    findingCaution: 'Perlu diperiksa sebelum Anda mengisi data',
+    findingUnchecked: 'Isi laman belum bisa diperiksa',
+    findingNotChecked: 'Tidak diperiksa, hanya satu tautan per pesan',
+    findingInvalid: 'Tautan ini tidak bisa dibaca',
+    findingPhoneOfficial: 'Nomor telepon resmi {brand}',
+    findingApk: 'Berkas instalasi (.apk) di luar jalur resmi',
     showAll: 'Lihat semua',
     showLess: 'Tampilkan lebih sedikit',
     readOnlyLabel: 'Salinan pesan yang diperiksa',
   },
   pasteBox: {
     examplesLabel: 'Contoh:',
+    placeholder: 'mis. https://promo-hadiah-murah.example/login',
   },
 
   /* Navigasi dan footer bersama (landing, Cek, Unduh) */
@@ -183,9 +231,15 @@ export const copy = {
     downloadCta: 'Buka halaman Unduh',
   },
 
-  /* Placeholder halaman yang belum diimplementasi (8.1, 8.2) */
-  placeholder: {
-    comingSoon: 'Segera hadir',
+  /* Halaman Cek (WEB-01, WEB-02) */
+  cek: {
+    title: 'Cek tautan atau pesan',
+    intro: 'Tempel tautan atau seluruh pesan, lalu lihat peringatan sebelum Anda mengisi data.',
+    stepLabel: 'Langkah pemeriksaan',
+    resultTitle: 'Hasil pemeriksaan',
+    errorTitle: 'Periksa kembali isian Anda',
+    offlineTitle: 'Pemeriksaan tertunda',
+    blockedTitle: 'Alamat ini tidak diperiksa',
   },
 
   /* Unduh (WEB-07) */
@@ -197,10 +251,28 @@ export const copy = {
     notInStore: 'Phantom belum tersedia di toko ekstensi resmi.',
     requirements: 'Phantom berjalan di Chrome dan Edge versi terbaru.',
     stepsTitle: 'Langkah pemasangan',
+    panelTitleChrome: 'Langkah untuk Google Chrome',
+    panelTitleEdge: 'Langkah untuk Microsoft Edge',
     steps: [
       'Unduh berkas zip ekstensi Phantom.',
       'Ekstrak berkas zip ke folder yang mudah Anda temukan.',
       'Buka chrome://extensions atau edge://extensions di peramban.',
+      'Aktifkan Mode pengembang.',
+      'Klik Muat yang belum dipak, lalu pilih folder hasil ekstrak.',
+      'Sematkan ikon Phantom di bilah alat peramban.',
+    ],
+    stepsChrome: [
+      'Unduh berkas zip ekstensi Phantom.',
+      'Ekstrak berkas zip ke folder yang mudah Anda temukan.',
+      'Buka chrome://extensions di peramban.',
+      'Aktifkan Mode pengembang.',
+      'Klik Muat yang belum dipak, lalu pilih folder hasil ekstrak.',
+      'Sematkan ikon Phantom di bilah alat peramban.',
+    ],
+    stepsEdge: [
+      'Unduh berkas zip ekstensi Phantom.',
+      'Ekstrak berkas zip ke folder yang mudah Anda temukan.',
+      'Buka edge://extensions di peramban.',
       'Aktifkan Mode pengembang.',
       'Klik Muat yang belum dipak, lalu pilih folder hasil ekstrak.',
       'Sematkan ikon Phantom di bilah alat peramban.',
@@ -213,6 +285,22 @@ export const copy = {
       'Langkah 5: Menekan tombol Muat yang belum dipak',
       'Langkah 6: Menyematkan ikon Phantom di bilah alat',
     ],
+    stepAltsChrome: [
+      'Langkah 1: Mengunduh berkas zip ekstensi Phantom',
+      'Langkah 2: Mengekstrak berkas zip ke folder komputer',
+      'Langkah 3: Membuka alamat chrome://extensions di Google Chrome',
+      'Langkah 4: Mengaktifkan sakelar Mode pengembang di kanan atas',
+      'Langkah 5: Menekan tombol Muat yang belum dipak',
+      'Langkah 6: Menyematkan ikon Phantom di bilah alat',
+    ],
+    stepAltsEdge: [
+      'Langkah 1: Mengunduh berkas zip ekstensi Phantom',
+      'Langkah 2: Mengekstrak berkas zip ke folder komputer',
+      'Langkah 3: Membuka alamat edge://extensions di Microsoft Edge',
+      'Langkah 4: Mengaktifkan sakelar Mode pengembang di panel navigasi kiri',
+      'Langkah 5: Menekan tombol Muat yang belum dipak',
+      'Langkah 6: Menyematkan ikon Phantom di bilah alat',
+    ],
     chromeAddress: 'chrome://extensions',
     edgeAddress: 'edge://extensions',
     browserChrome: 'Google Chrome',
@@ -222,6 +310,8 @@ export const copy = {
     helpTitle: 'Butuh bantuan?',
     helpBody:
       'Bila tombol Muat yang belum dipak tidak terlihat, pastikan Mode pengembang sudah aktif lalu muat ulang halaman.',
+    privacyTitle: 'Privasi Anda',
+    privacyBody: 'Ekstensi bekerja di perangkat Anda dan tidak menyimpan pesan yang Anda periksa.',
     backHome: 'Kembali ke Beranda',
   },
 } as const;

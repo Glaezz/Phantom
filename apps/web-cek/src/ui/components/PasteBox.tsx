@@ -108,7 +108,7 @@ export function PasteBox({
             onChange(e.target.value);
             if (showPasteHelp) setShowPasteHelp(false);
           }}
-          placeholder={copy.web.label}
+          placeholder={copy.pasteBox.placeholder}
           rows={5}
           disabled={loading}
           aria-required="true"
@@ -144,6 +144,9 @@ export function PasteBox({
           {copy.web.check}
         </Button>
       </div>
+
+      {/* Persetujuan tersirat Web Cek (EXT-06 hanya untuk ekstensi) */}
+      <p className="ph-pastebox__consent">{copy.web.consentNotice}</p>
 
       {/* Privasi: noStore dengan ikon gembok */}
       <div className="ph-pastebox__privacy">

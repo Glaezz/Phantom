@@ -28,12 +28,20 @@ export interface AgentResponse {
   model?: string;
   steps?: number;
   trace?: AgentTraceStep[];
+  verdict?: AgentVerdict['verdict'];
+  confidence?: number;
+  reasons?: string[];
+  capped?: boolean;
+  usage?: { input: number; output: number };
 }
 
 export interface CacheResponse {
   key: string;
   hit: boolean;
   written: boolean;
+  reasons?: string[];
+  createdAt?: number;
+  expiresAt?: number;
 }
 
 export interface AnalysisInput {
@@ -141,7 +149,14 @@ export async function prepareAnalysis(
           capped: false,
         },
         degraded: [],
-        cache: { key, hit: true, written: false },
+        cache: {
+          key,
+          hit: true,
+          written: false,
+          reasons: record.reasons.slice(0, 3),
+          createdAt: record.createdAt,
+          expiresAt: record.expiresAt,
+        },
         stages,
       };
     }
@@ -304,6 +319,11 @@ export async function runPreparedAgent(
       model: run.model,
       steps: run.steps,
       trace: run.trace,
+      verdict: run.verdict.verdict,
+      confidence: run.verdict.confidence,
+      reasons: run.verdict.reasons.slice(0, 3),
+      capped: merged.capped,
+      usage: { input: run.usage.inputTokens, output: run.usage.outputTokens },
     },
     tokens: { input: run.usage.inputTokens, output: run.usage.outputTokens },
   };

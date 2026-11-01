@@ -106,6 +106,22 @@
   gap: var(--s-3);
 }
 
+/* Tautan lain di pesan yang tidak diperiksa penuh: tampil redup, bukan aman. */
+.ph-parser-list__row[data-checked='false'] {
+  background-color: var(--ink-100);
+  border-style: dashed;
+  box-shadow: none;
+}
+
+.ph-parser-list__row[data-checked='false'] .ph-parser-list__finding {
+  color: var(--text-muted);
+}
+
+.ph-parser-list__row[data-checked='false'] .ph-parser-list__value {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
 .ph-parser-list__value {
   padding: var(--s-1) var(--s-2);
   background-color: var(--ink-100);

@@ -150,6 +150,7 @@ export function MessageParserList({
               key={item.id ?? `item-${index}`}
               className="ph-parser-list__row"
               data-status={item.status}
+              data-checked={item.checked === false ? 'false' : 'true'}
               onClick={() => onSelectItem?.(item)}
             >
               <div className="ph-parser-list__row-main">

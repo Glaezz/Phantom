@@ -13,6 +13,8 @@ const NAV_ITEMS = [
 export function Header() {
   const { pathname } = useLocation();
 
+  const isCek = pathname === '/cek' || pathname === '/cek/';
+
   return (
     <>
       <a href="#main-content" className="ph-skip-link">
@@ -45,10 +47,12 @@ export function Header() {
             })}
           </nav>
 
-          {/* CTA paling kanan, varian secondary; primer hanya di hero */}
-          <Link to="/cek" className="ph-header__cta ph-button ph-button--secondary">
-            {copy.landing.cta}
-          </Link>
+          {/* CTA paling kanan, varian secondary; primer hanya di hero. Sembunyikan di /cek */}
+          {!isCek && (
+            <Link to="/cek" className="ph-header__cta ph-button ph-button--secondary">
+              {copy.landing.cta}
+            </Link>
+          )}
         </div>
       </header>
     </>

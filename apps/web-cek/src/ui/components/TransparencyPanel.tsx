@@ -13,6 +13,13 @@ export interface TransparencyPanelProps {
 
 const STAGES: Stage[] = ['L0', 'L1', 'L2', 'L3', 'L4'];
 
+/** Terima kunci katalog (`skippedContent`) maupun teks siap pakai. */
+function resolveSkipReason(key?: string): string {
+  if (!key) return copy.trace.skippedNoConsent;
+  const known = copy.trace[key as keyof typeof copy.trace];
+  return typeof known === 'string' ? known : key;
+}
+
 export function TransparencyPanel({
   verdict,
   surface = 'web',
@@ -46,7 +53,7 @@ export function TransparencyPanel({
       stage,
       finding: 'skipped',
       summaryKey: copy.trace[stage],
-      skipReasonKey: copy.trace.skippedNoConsent,
+      skipReasonKey: 'skippedNoConsent',
     };
   });
 
@@ -140,12 +147,7 @@ export function TransparencyPanel({
                 const summaryText = isInjection
                   ? copy.trace.injectionIgnored
                   : isSkipped
-                    ? step.skipReasonKey &&
-                      copy.trace[step.skipReasonKey as keyof typeof copy.trace]
-                      ? copy.trace[
-                          step.skipReasonKey as keyof typeof copy.trace
-                        ]
-                      : copy.trace.skippedNoConsent
+                    ? resolveSkipReason(step.skipReasonKey)
                     : step.summaryKey;
 
                 return (

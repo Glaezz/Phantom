@@ -9,7 +9,7 @@ export interface ResultCardProps {
   verdict: Verdict;
   onCopy: () => void;
   onWhy: () => void;
-  notices?: Array<'rulesOnly' | 'spaLimit' | 'budgetLimited'>;
+  notices?: Verdict['notices'];
 }
 
 export function ResultCard({ verdict, onCopy, onWhy, notices }: ResultCardProps) {
@@ -17,9 +17,15 @@ export function ResultCard({ verdict, onCopy, onWhy, notices }: ResultCardProps)
   const status = verdict.status;
 
   const activeNotices = notices ?? verdict.notices ?? [];
-  const showRulesOnly = activeNotices.includes('rulesOnly') || verdict.source === 'rules';
+  const showCache = verdict.cacheHit === true;
+  const showDeep = !showCache && verdict.agentUsed === true;
+  const showRulesOnly =
+    !showCache && !showDeep && (activeNotices.includes('rulesOnly') || verdict.source === 'rules');
   const showSpaLimit = activeNotices.includes('spaLimit');
   const showBudgetLimited = activeNotices.includes('budgetLimited');
+  const showContentUnchecked = activeNotices.includes('contentUnchecked');
+  const showDeepUnavailable = activeNotices.includes('deepUnavailable');
+  const showOtherLinksUnchecked = activeNotices.includes('otherLinksUnchecked');
 
   const brandName = verdict.claimedBrand?.name || copy.web.officialChannelDefault;
   const officialChannelFirst =
@@ -113,6 +119,16 @@ export function ResultCard({ verdict, onCopy, onWhy, notices }: ResultCardProps)
           {showRulesOnly && (
             <span className="ph-result-card__notice-pill">
               {copy.mode.rulesOnly}
+            </span>
+          )}
+          {showDeep && (
+            <span className="ph-result-card__notice-pill">
+              {copy.mode.deep}
+            </span>
+          )}
+          {showCache && (
+            <span className="ph-result-card__notice-pill">
+              {copy.mode.cache}
             </span>
           )}
         </div>
@@ -210,6 +226,15 @@ export function ResultCard({ verdict, onCopy, onWhy, notices }: ResultCardProps)
       <p className="ph-result-card__disclaimer">{copy.panel.disclaimer}</p>
 
       {/* 8. Notices bawah bila ada */}
+      {showDeepUnavailable && (
+        <p className="ph-result-card__sub-notice">{copy.web.deepUnavailable}</p>
+      )}
+      {showOtherLinksUnchecked && (
+        <p className="ph-result-card__sub-notice">{copy.web.otherLinksUnchecked}</p>
+      )}
+      {showContentUnchecked && (
+        <p className="ph-result-card__sub-notice">{copy.web.contentUnchecked}</p>
+      )}
       {showSpaLimit && (
         <p className="ph-result-card__sub-notice">{copy.web.spaLimit}</p>
       )}

@@ -47,7 +47,8 @@
   padding: var(--s-1) var(--s-2);
   border-radius: var(--r-pill);
   background-color: var(--ink-200);
-  color: var(--ink-800);
+  /* --ink-800 tidak dipetakan di mode gelap; pakai --text agar tetap AA. */
+  color: var(--text);
   font-size: var(--fs-caption);
   font-weight: 500;
 }

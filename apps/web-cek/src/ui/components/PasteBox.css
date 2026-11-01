@@ -113,6 +113,13 @@
   height: var(--hit-lg);
 }
 
+.ph-pastebox__consent {
+  margin: 0;
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+  line-height: var(--lh-body);
+}
+
 .ph-pastebox__privacy {
   display: flex;
   align-items: center;

@@ -172,7 +172,8 @@
   font-family: var(--font-mono);
   font-size: var(--fs-caption);
   font-weight: 600;
-  color: var(--ink-600);
+  /* --ink-600 statis terlalu redup di mode gelap; --text-muted aman di keduanya. */
+  color: var(--text-muted);
 }
 
 .ph-transparency__step-name {

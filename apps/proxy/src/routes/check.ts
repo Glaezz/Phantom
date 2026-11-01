@@ -73,6 +73,11 @@ function agentSummary(result: PreparedWithAgent) {
     provider: result.agent.provider,
     model: result.agent.model,
     steps: result.agent.steps,
+    verdict: result.agent.verdict,
+    confidence: result.agent.confidence,
+    reasons: result.agent.reasons,
+    capped: result.agent.capped,
+    usage: result.agent.usage,
   };
 }
 
@@ -233,6 +238,7 @@ checkRoute.post('/', async (c) => {
       result: prepared.result,
       final: prepared.final,
       agent: agentSummary(prepared),
+      cache: prepared.cache,
       degraded: prepared.degraded,
     };
   });
